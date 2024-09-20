@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { DisplayParameters } from '$lib';
 	import { majorScale } from '$lib/theory/majorScale';
 	import { minorScale } from '$lib/theory/minorScale';
 	import { ToneClass } from '$lib/theory/tones';
@@ -12,6 +11,8 @@
 	import type { ToneGroupBuilder } from '$lib/theory';
 	import { majorScaleHarmonizationTriads, majorTriad } from '$lib/theory/triad';
 	import { majorScaleHarmonizationSevenths, majorSeventh } from '$lib/theory/seventhChords';
+
+	import { fretboardSettings } from '$lib/settings';
 
 	interface HighlightModeScale {
 		type: 'Scale';
@@ -30,27 +31,6 @@
 	}
 
 	type HighlightMode = Readonly<HighlightModeScale> | Readonly<HighlightModeChord>;
-
-	const parameters: DisplayParameters = {
-		marginTop: 40,
-		stringSpacing: 50,
-		head: {
-			width: 80,
-			paddingLeft: 40
-		},
-		nut: {
-			width: 4
-		},
-		note: {
-			radius: 20
-		},
-		fret: {
-			spacing: 60,
-			width: 2
-		},
-		frets: 24,
-		strings: [ToneClass.G, ToneClass.D, ToneClass.A, ToneClass.E]
-	};
 
 	let highlightMode: HighlightMode;
 	$: highlighters = [buildHighlighter(highlightMode)];
@@ -105,9 +85,16 @@
 	setDefaultHighlightMode();
 </script>
 
-<h1 class="text-2xl">Visualizer</h1>
-
 <main>
+	<h1 class="text-2xl">Visualize</h1>
+	<section class="overflow-scroll">
+		<GuitarVisualization
+			strings={$fretboardSettings.strings}
+			{highlighters}
+			options={$fretboardSettings}
+		/>
+	</section>
+	<div class="divider"></div>
 	<section class="flex">
 		<section class="mr-8">
 			<h2 class="text-xl">Tonic</h2>
@@ -178,12 +165,5 @@
 			</List>
 		{/if}
 	</section>
-	<section class="overflow-scroll">
-		<GuitarVisualization
-			frets={21}
-			strings={parameters.strings}
-			{highlighters}
-			options={parameters}
-		/>
-	</section>
+
 </main>

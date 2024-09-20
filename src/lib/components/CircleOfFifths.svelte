@@ -31,18 +31,18 @@
 	}
 </script>
 
-<svg width="400" height="400">
+<svg width="300" height="300">
 	<style>
 		.arc:hover {
 			stroke-width: 2;
 		}
 	</style>
 
-	<g transform="translate(200,200)">
+	<g transform="translate(150,150)">
 		{#each arcs as arc, i}
 			<CircleofFifthsElement
-				r1={120}
-				r2={195}
+				r1={85}
+				r2={145}
 				a1={arc.a1}
 				a2={arc.a2}
 				tone={arc.tone}

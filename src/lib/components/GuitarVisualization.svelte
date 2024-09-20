@@ -9,7 +9,6 @@
 	import Nut from './Nut.svelte';
 
 	export let strings: ReadonlyArray<ToneClass>;
-	export let frets: number;
 	export let highlighters: ReadonlyArray<(note: Note) => Note>;
 	export let options: DisplayParameters;
 
@@ -32,7 +31,7 @@
 		'#ee99ff'
 	];
 
-	$: fretboard = buildFretboard(strings, frets, highlighters);
+	$: fretboard = buildFretboard(strings, options.frets, highlighters);
 
 	$: fretMarkers = [
 		marker(3, 'single'),
@@ -45,24 +44,24 @@
 		marker(19, 'single'),
 		marker(21, 'single'),
 		marker(24, 'double')
-	].filter((marker) => marker.fret <= frets);
+	].filter((marker) => marker.fret <= options.frets);
 </script>
 
 <svg
-	width={options.head.width + frets * options.fret.spacing + 40}
+	width={options.head.width + options.frets * options.fret.spacing + 40}
 	height={30 + options.marginTop + strings.length * options.stringSpacing}
 >
 	<g class="layer-base">
 		<Nut parameters={options} stringCount={strings.length} />
 		<Fretboard parameters={options}>
-			{#each Array(frets) as _, i}
+			{#each Array(options.frets) as _, i}
 				<Fret parameters={options} number={i} stringCount={strings.length} />
 			{/each}
 			{#each strings as _, j}
 				<line
 					x1={0}
 					y1={j * options.stringSpacing}
-					x2={frets * options.fret.spacing}
+					x2={options.frets * options.fret.spacing}
 					y2={j * options.stringSpacing}
 					stroke-width="1"
 					stroke="#999"
