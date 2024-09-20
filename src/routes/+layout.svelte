@@ -42,7 +42,7 @@
 				</div>
 			</nav>
 		</header>
-		<section class="p-6">
+		<section class="px-6">
 			<slot></slot>
 		</section>
 	</div>

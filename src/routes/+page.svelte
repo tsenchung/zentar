@@ -94,17 +94,15 @@
 			options={$fretboardSettings}
 		/>
 	</section>
-	<div class="divider"></div>
+	<div class="divider mt-0"></div>
 	<section class="flex">
 		<section class="mr-8">
-			<h2 class="text-xl">Tonic</h2>
 			<CircleOfFifths onTonicSelected={selectTonic} initialTonic={highlightMode.tonic} />
 		</section>
 		<div class="self-center">
 			<ArrowRight />
 		</div>
 		<section class="ml-8">
-			<h2 class="text-xl">Highlight</h2>
 			<List classes="w-56 text-sm">
 				<ListItem
 					label="Major Scale"
@@ -154,7 +152,7 @@
 			<div class="self-center ml-8">
 				<ArrowRight />
 			</div>
-			<List classes="w-56 text-sm">
+			<List classes="w-56 text-sm ml-8">
 				{#each highlightMode.chordType == 'Triad' ? majorScaleHarmonizationTriads : majorScaleHarmonizationSevenths as triad, i}
 					<ListItem
 						label={triad.name}
