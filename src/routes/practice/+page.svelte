@@ -1,87 +1,68 @@
 <script lang="ts">
-	import { fretboardSettings } from '$lib/settings';
-	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
-	import { highlighter } from '$lib/theory/fretboard';
-	import { majorScale } from '$lib/theory/majorScale';
-	import { ToneClass } from '$lib/theory/tones';
+	import { client } from './practiceSession';
 
-	let duration = 65000;
-	let timerEnd: number;
-	let timer = 0;
-	let currentTimeout: number;
-	const tick = () => {
-		timer = timerEnd - new Date().valueOf();
-		if (timer > 0) {
-			currentTimeout = setTimeout(tick, 100);
-		}
-	};
+	let practiceSessions = client.getPracticeSessions();
+	let newPracticeSessionName: string = '';
 
-	const start = () => {
-		timerEnd = new Date().valueOf() + duration;
-		timer = duration;
-		tick();
-	};
+	function showCreatePracticeSessionModal() {
+		(<HTMLDialogElement>document.getElementById('practice_session_create'))?.showModal();
+	}
 
-	const pause = () => {
-		clearTimeout(currentTimeout);
-		duration = timerEnd - new Date().valueOf();
-	};
-
-	const resume = () => {
-		start();
-	};
-
-	$: seconds = Math.trunc(timer / 1000) % 60;
-	$: minutes = Math.trunc(timer / 60000) % 60;
-	start();
+	function createPracticeSession() {
+		client.add(newPracticeSessionName);
+		newPracticeSessionName = '';
+		practiceSessions = client.getPracticeSessions();
+	}
 </script>
 
-<main>
-	<h1>Practice</h1>
-	<div class="g grid">
-		<div class="timer">
-			<div
-				class="radial-progress"
-				style="--value:{(100 * (duration - timer)) / duration}; --size:12rem; --thickness: 2px;"
-				role="progressbar"
-			>
-				<span class="countdown font-mono text-2xl">
-					<span style="--value:{minutes};"></span>
-					:
-					<span style="--value:{seconds};"></span>
-				</span>
-			</div>
-		</div>
-		<div class="metronome w-10/12 h-56 bg-slate-100">Metronome</div>
-		<div class="exercise">
-			<section class="overflow-scroll">
-				<GuitarVisualization
-					strings={$fretboardSettings.strings}
-					highlighters={[highlighter(majorScale)(ToneClass.C)]}
-					options={$fretboardSettings}
-				/>
-			</section>
-		</div>
+<div class="overflow-x-auto">
+	<h1 class="text-2xl">Sessions</h1>
+	<button class="btn" on:click={showCreatePracticeSessionModal}>New</button>
+	<table class="table">
+		<thead>
+			<tr>
+				<td> Name </td>
+				<td> Actions </td>
+			</tr>
+		</thead>
+		<tbody>
+			{#each practiceSessions as practiceSession (practiceSession.uuid)}
+				<tr>
+					<td>{practiceSession.name}</td>
+					<td>
+						<button class="btn btn-circle">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+								class="size-6"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+						</button>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+</div>
+<dialog id="practice_session_create" class="modal">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Create Practice Session</h3>
+		<form method="dialog" on:submit={createPracticeSession}>
+			<!-- if there is a button in form, it will close the modal -->
+			<input
+				type="text"
+				placeholder="Practice Session Name"
+				required
+				bind:value={newPracticeSessionName}
+				class="input input-bordered w-full max-w-xs"
+			/>
+			<button class="btn">Close</button>
+		</form>
 	</div>
-</main>
-
-<style>
-	.g {
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			't m'
-			'p p';
-	}
-	.timer {
-		grid-area: t;
-		align-self: center;
-		justify-self: center;
-	}
-	.metronome {
-		grid-area: m;
-	}
-	.exercise {
-		grid-area: p;
-		justify-self: center;
-	}
-</style>
+</dialog>
