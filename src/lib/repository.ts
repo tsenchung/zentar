@@ -51,19 +51,17 @@ export const LocalStorageRepository = <T extends Identifiable>(
 		},
 		save: (item: T) => {
 			ensureIndexIsLoaded();
+			window.localStorage.setItem(namespace, JSON.stringify(index));
 			window.localStorage.setItem(item.id, JSON.stringify(item));
 			index?.push(item.id);
-			window.localStorage.setItem(namespace, JSON.stringify(index));
-			if (collection) {
-				collection.push(item);
-			}
+			collection?.push(item);
 			cache.set(item.id, item);
 		},
 		delete: (id: string) => {
 			ensureIndexIsLoaded();
-			window.localStorage.removeItem(id);
 			index = index?.filter((i) => i != id);
 			window.localStorage.setItem(namespace, JSON.stringify(index));
+			window.localStorage.removeItem(id);
 			collection = collection?.filter((item) => item.id != id);
 			cache.delete(id);
 		}
