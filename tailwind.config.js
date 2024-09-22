@@ -13,7 +13,8 @@ export default {
 				light: {
 					...themes['light'],
 					primary: '#99dbff',
-					secondary: '#ee99ff'
+					secondary: '#ee99ff',
+					error: 'oklch(51.32% 0.269 22.18)',
 				}
 			}
 		]

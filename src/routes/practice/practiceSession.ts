@@ -1,20 +1,11 @@
 export interface PracticeSession {
 	uuid: string;
 	name: string;
-	exercises: readonly Exercise[];
+	exercises: readonly string[];
 }
 
-export interface Exercise {
-	uuid: string;
-	title: string;
-}
-
-export function practiceSession(): PracticeSession {
-	return {
-		uuid: crypto.randomUUID(),
-		name: '',
-		exercises: []
-	};
+function loadIndex() {
+	return <string[]>JSON.parse(localStorage.getItem('practice_sessions_index') || '[]');
 }
 
 const PracticeSessionClient = () => {
@@ -41,20 +32,3 @@ const PracticeSessionClient = () => {
 };
 
 export const client = PracticeSessionClient();
-
-export function addPracticeSession(practiceSession: PracticeSession) {
-	window.localStorage.setItem(practiceSession.uuid, JSON.stringify(practiceSession));
-}
-
-export function loadIndex() {
-	return <string[]>JSON.parse(localStorage.getItem('practice_session_index') || '[]');
-}
-
-export function loadPracticeSessions() {
-	const index = loadIndex();
-	return {
-		practiceSessions: <PracticeSession[]>(
-			index.map((uuid) => JSON.parse(<string>localStorage.getItem(uuid)))
-		)
-	};
-}
