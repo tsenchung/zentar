@@ -14,6 +14,7 @@
 				<div class="flex-none">
 					<ul class="menu menu-horizontal px-1">
 						<li><a href="/">Visualize</a></li>
+						<li><a href="/exercises">Exercises</a></li>
 						<li><a href="/practice">Practice</a></li>
 						<li>
 							<label for="my-drawer">

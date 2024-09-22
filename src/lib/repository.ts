@@ -19,12 +19,17 @@ export const LocalStorageRepository = <T extends Identifiable>(
 	let index: string[] | undefined;
 	let collection: T[] | undefined;
 	const cache = new Map<string, T>();
+	const ensureIndexIsLoaded = () => {
+		if(!index) {
+			index = loadIndex(namespace);
+		}
+	};
 	return {
 		collection: () => {
-			if (!collection || !index) {
-				index = loadIndex(namespace);
+			ensureIndexIsLoaded();
+			if (!collection) {
 				collection = [];
-				index.forEach((id) => {
+				index?.forEach((id) => {
 					const item = JSON.parse(window.localStorage.getItem(id)!);
 					collection?.push(item);
 					cache.set(item.id, item);
@@ -45,10 +50,9 @@ export const LocalStorageRepository = <T extends Identifiable>(
 			return item;
 		},
 		save: (item: T) => {
+			ensureIndexIsLoaded();
 			window.localStorage.setItem(item.id, JSON.stringify(item));
-			if (index) {
-				index.push(item.id);
-			}
+			index?.push(item.id);
 			window.localStorage.setItem(namespace, JSON.stringify(index));
 			if (collection) {
 				collection.push(item);
@@ -56,14 +60,11 @@ export const LocalStorageRepository = <T extends Identifiable>(
 			cache.set(item.id, item);
 		},
 		delete: (id: string) => {
+			ensureIndexIsLoaded();
 			window.localStorage.removeItem(id);
-			if (!index) {
-				index = loadIndex(namespace);
-			}
-			index = index.filter((i) => i != id);
+			index = index?.filter((i) => i != id);
 			window.localStorage.setItem(namespace, JSON.stringify(index));
 			collection = collection?.filter((item) => item.id != id);
-			
 			cache.delete(id);
 		}
 	};

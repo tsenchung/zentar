@@ -60,7 +60,7 @@
 					<td>{exercise.title}</td>
 					<td>
 						<div>
-							<a class="btn btn-circle" href="practice/exercise/{exercise.id}">
+							<a class="btn btn-circle" href="exercises/exercise/{exercise.id}">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
