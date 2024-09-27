@@ -4,6 +4,7 @@
 	import { highlighter } from '$lib/theory/fretboard';
 	import { majorScale } from '$lib/theory/majorScale';
 	import { ToneClass } from '$lib/theory/tones';
+	import Metronome from '$lib/components/metronome/Metronome.svelte';
 
 	let duration = 65000;
 	let timerEnd: number;
@@ -52,7 +53,7 @@
 				</span>
 			</div>
 		</div>
-		<div class="metronome w-10/12 h-56 bg-slate-100">Metronome</div>
+		<div class="metronome w-10/12 h-56"><Metronome /></div>
 		<div class="exercise">
 			<section class="overflow-scroll">
 				<GuitarVisualization
