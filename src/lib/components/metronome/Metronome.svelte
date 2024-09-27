@@ -3,6 +3,10 @@
 	import { onDestroy, onMount } from 'svelte';
 	import metronomeClickDownbeat from './250551__druminfected__metronomeup.wav';
 	import metronomeClickNotOne from './250552__druminfected__metronome.wav';
+	import SixteenthNote from '$lib/icons/SixteenthNote.svelte';
+	import TripletNote from '$lib/icons/TripletNote.svelte';
+	import EightNote from '$lib/icons/EightNote.svelte';
+	import QuarterNote from '$lib/icons/QuarterNote.svelte';
 
 	let audioCtx: AudioContext | undefined;
 	let playing = false;
@@ -76,10 +80,10 @@
 		fetchDowneatClick();
 	});
 	onDestroy(() => {
-		if(browser) {
+		if (browser) {
 			audioCtx?.close();
 		}
-	})
+	});
 </script>
 
 <input type="range" min="30" max="120" class="range range-primary" bind:value={bpm} />
@@ -117,39 +121,30 @@
 			</svg>
 		</div>
 	</label>
-
 	<div class="join">
-		<input
-			class="join-item btn"
-			type="radio"
-			name="options"
-			aria-label="Quarter"
-			value={1}
-			bind:group={subdivisions}
-		/>
-		<input
-			class="join-item btn"
-			type="radio"
-			name="options"
-			aria-label="Eight"
-			value={2}
-			bind:group={subdivisions}
-		/>
-		<input
-			class="join-item btn"
-			type="radio"
-			name="options"
-			aria-label="Triplets"
-			value={3}
-			bind:group={subdivisions}
-		/>
-		<input
-			class="join-item btn"
-			type="radio"
-			name="options"
-			aria-label="Sixteenth"
-			value={4}
-			bind:group={subdivisions}
-		/>
+		<button
+			class="btn join-item {subdivisions == 1 ? 'btn-primary' : ''}"
+			on:click={() => {
+				subdivisions = 1;
+			}}><QuarterNote /></button
+		>
+		<button
+			class="btn join-item {subdivisions == 2 ? 'btn-primary' : ''}"
+			on:click={() => {
+				subdivisions = 2;
+			}}><EightNote /></button
+		>
+		<button
+			class="btn join-item {subdivisions == 3 ? 'btn-primary' : ''}"
+			on:click={() => {
+				subdivisions = 3;
+			}}><TripletNote /></button
+		>
+		<button
+			class="btn join-item {subdivisions == 4 ? 'btn-primary' : ''}"
+			on:click={() => {
+				subdivisions = 4;
+			}}><SixteenthNote /></button
+		>
 	</div>
 </div>
