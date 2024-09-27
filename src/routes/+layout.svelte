@@ -53,3 +53,20 @@
 		</div>
 	</div>
 </div>
+<footer class="footer bg-neutral text-neutral-content p-10">
+	<section>
+		<section>
+			<h2>Metronome Sounds</h2>
+			<p>
+				<a href="https://freesound.org/people/Druminfected/sounds/250552/">Metronome.wav</a> by
+				<a href="https://freesound.org/people/Druminfected/">Druminfected</a>
+				| License: <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons 0</a>
+			</p>
+			<p>
+				<a href="https://freesound.org/people/Druminfected/sounds/250551/">MetronomeUp.wav</a> by
+				<a href="https://freesound.org/people/Druminfected/">Druminfected</a>
+				| License: <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons 0</a>
+			</p>
+		</section>
+	</section>
+</footer>
