@@ -1,10 +1,6 @@
 <script lang="ts">
 	import '../app.css';
 	import Settings from '$lib/components/Settings.svelte';
-	import QuarterNote from '$lib/icons/QuarterNote.svelte';
-	import EightNote from '$lib/icons/EightNote.svelte';
-	import SixteenthNote from '$lib/icons/SixteenthNote.svelte';
-	import TripletNote from '$lib/icons/TripletNote.svelte';
 </script>
 
 <div class="drawer drawer-end">

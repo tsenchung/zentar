@@ -1,4 +1,6 @@
-<!-- Actormusicus, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons -->
+<!-- Actormusicus, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons / Adapted as a tailwind icon in svelte -->
+<!-- svelte-ignore illegal-attribute-character -->
+
 <svg
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:cc="http://creativecommons.org/ns#"

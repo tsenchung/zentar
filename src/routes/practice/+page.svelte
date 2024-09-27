@@ -70,8 +70,8 @@
 	.g {
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
-			't m'
-			'p p';
+			'p p'
+			't m';
 	}
 	.timer {
 		grid-area: t;

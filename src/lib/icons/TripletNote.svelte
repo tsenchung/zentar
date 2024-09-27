@@ -1,4 +1,6 @@
-<!-- PianistHere, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons / Modified for use as a tailwind icon -->
+<!-- PianistHere, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons / Adapted as a tailwind icon in svelte -->
+<!-- svelte-ignore illegal-attribute-character -->
+
 <svg
 	viewBox="0 0 60 60"
 	version="1.0"
