@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import metronomeClickDownbeat from './250551__druminfected__metronomeup.wav';
 	import metronomeClickNotOne from './250552__druminfected__metronome.wav';
 
@@ -75,6 +75,11 @@
 	onMount(() => {
 		fetchDowneatClick();
 	});
+	onDestroy(() => {
+		if(browser) {
+			audioCtx?.close();
+		}
+	})
 </script>
 
 <input type="range" min="30" max="120" class="range range-primary" bind:value={bpm} />
