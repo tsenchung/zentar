@@ -47,7 +47,7 @@
 				a2={arc.a2}
 				tone={arc.tone}
 				onTonicSelected={selectTonic}
-				tabindex={i}
+				tabindex={0}
 				active={selectedTonic === arc.tone}
 			/>
 		{/each}
