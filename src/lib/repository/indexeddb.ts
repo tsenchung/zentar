@@ -1,5 +1,12 @@
-import { openDB, type DBSchema, type IDBPDatabase, type StoreNames, type StoreValue } from 'idb';
+import { openDB, type DBSchema, type IDBPDatabase, type StoreKey, type StoreNames, type StoreValue } from 'idb';
 import type { Exercise, PracticeRoutine, PracticeRoutineExercise, Repository } from './repository';
+
+declare module "idb" {
+	type IDBPDatabaseExtends = Omit<IDBDatabase, 'createObjectStore' | 'deleteObjectStore' | 'transaction' | 'objectStoreNames'>;
+	interface IDBPDatabase<DBTypes extends DBSchema | unknown = unknown> extends IDBPDatabaseExtends {
+		add<Name extends StoreNames<DBTypes>>(storeName: Name, value: Omit<StoreValue<DBTypes, Name>, 'id'>, key?: StoreKey<DBTypes, Name> | IDBKeyRange): Promise<StoreKey<DBTypes, Name>>;
+	}
+}
 
 export interface ZentarDB extends DBSchema {
 	exercises: {
@@ -46,7 +53,10 @@ export async function Repository<Name extends StoreNames<ZentarDB>>(
 		async find(id: number) {
 			return db.get(repository, id);
 		},
-		async save(item: StoreValue<ZentarDB, Name>) {
+		async create(item: Omit<StoreValue<ZentarDB, Name>, 'id'>) {
+			await db.add(repository, item);
+		},
+		async update(item: StoreValue<ZentarDB, Name>) {
 			await db.put(repository, item);
 		},
 		async delete(id: number) {
@@ -82,11 +92,21 @@ export const PracticeRoutineExerciseRepository = (db: IDBPDatabase<ZentarDB>) =>
 			exerciseId: number,
 			duration: number
 		) {
+			const exercises = (
+				await db.getAllFromIndex(
+					'practice_routine_exercises',
+					'byPracticeRoutineId',
+					practiceRoutineId
+				)
+			).sort((a, b) => a.order - b.order);
+			exercises.forEach((exercise, i) => {
+				db.put('practice_routine_exercises', { ...exercise, order: i });
+			});
 			db.add('practice_routine_exercises', {
 				practiceRoutineId,
 				exerciseId,
 				duration,
-				order: 10
+				order: exercises.length
 			});
 		}
 	};

@@ -9,7 +9,7 @@
 	export let onCreate: () => void;
 	export let repository: Repository<PracticeRoutine>;
 
-	let validation: SafeParseReturnType<{}, PracticeRoutine> | undefined;
+	let validation: SafeParseReturnType<{}, Omit<PracticeRoutine, 'id'>> | undefined;
 	let validationErrors = new z.ZodError<PracticeRoutine>([]);
 	let errors: z.typeToFlattenedError<PracticeRoutine>;
 	$: {
@@ -28,12 +28,12 @@
 
 	function validate() {
 		const data = new FormData(form);
-		validation = PracticeRoutineSchema.safeParse(Object.fromEntries(data.entries()));
+		validation = PracticeRoutineSchema.omit({id: true}).safeParse(Object.fromEntries(data.entries()));
 	}
 
 	async function submit(ev: SubmitEvent) {
 		if (validation?.success) {
-			await repository.save(validation.data);
+			await repository.create(validation.data);
 			onCreate();
 		} else {
 			ev.preventDefault();

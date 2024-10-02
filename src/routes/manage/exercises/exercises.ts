@@ -3,6 +3,7 @@ import type { Exercise } from '$lib/repository/repository';
 import type { IDBPDatabase } from 'idb';
 
 export const TextAidExercise = (): Exercise => ({
+	id: 0,
 	title: '',
 	aid: {
 		type: 'TextAid',

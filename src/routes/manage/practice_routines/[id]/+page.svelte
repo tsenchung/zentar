@@ -10,7 +10,7 @@
 
 	let selectedExercise: string | number;
 
-	async function addExercise() {
+	async function addExercise(ev: SubmitEvent) {
 		if (data.practiceRoutine.id) {
 			data.practiceRoutineExerciseRepository.addExerciseToPracticeRoutine(
 				data.practiceRoutine.id,
@@ -75,42 +75,41 @@
 			</form>
 		</div>
 		<div>
-			<form id="practice_routine_add_exercise_form" method="dialog" novalidate>
-				<select
-					form="practice_routine_add_exercise_form"
-					class="select w-full max-w-xs"
-					required
-					bind:value={selectedExercise}
-				>
-					<option disabled selected value="">Select an exercise</option>
-					{#each data.allExercises as exercise}
-						<option value={exercise.id}>
-							{exercise.title}
-						</option>
-					{/each}
-				</select>
-				<p>Duration</p>
-				<div class="flex gap-4 items-center">
-					<input
-						type="number"
-						required
-						placeholder="MM"
-						min="0"
-						name="minutes"
-						class="input input-ghost w-28"
-					/>
-					:
-					<input
-						type="number"
-						required
-						min="0"
-						max="59"
-						placeholder="SS"
-						name="seconds"
-						class="input input-ghost w-28"
-					/>
+			<form id="practice_routine_add_exercise_form" method="dialog" on:submit={addExercise}>
+				<div class="flex flex-col gap-4">
+					<label class="form-control w-full">
+						<div class="label">
+							<span class="label-text font-semibold">Exercise</span>
+						</div>
+						<select
+							form="practice_routine_add_exercise_form"
+							class="select w-full"
+							required
+							bind:value={selectedExercise}
+						>
+							<option disabled selected value="">Select an exercise</option>
+							{#each data.allExercises as exercise}
+								<option value={exercise.id}>
+									{exercise.title}
+								</option>
+							{/each}
+						</select>
+					</label>
+					<label class="form-control w-full">
+						<div class="label">
+							<span class="label-text font-semibold">Duration</span>
+							<span class="label-text-alt text-neutral">MM:SS</span>
+						</div>
+						<input
+							type="text"
+							name="duration"
+							class="input input-bordered w-full aria-[invalid=true]:input-error"
+						/>
+					</label>
+					<div>
+						<button class="btn btn-primary">Add</button>
+					</div>
 				</div>
-				<button class="btn btn-primary">Add</button>
 			</form>
 		</div>
 	</div>

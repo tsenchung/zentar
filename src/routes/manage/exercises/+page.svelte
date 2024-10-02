@@ -24,7 +24,7 @@
 	}
 
 	async function createExercise() {
-		await data.repository.save(newExercise);
+		await data.repository.create(newExercise);
 		await refresh();
 		newExercise = TextAidExercise();
 	}
