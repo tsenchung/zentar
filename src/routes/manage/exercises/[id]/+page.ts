@@ -1,16 +1,19 @@
 import { error } from '@sveltejs/kit';
-import { Repository } from "../exercises";
+import { Repository } from '../exercises';
+import { IndexedDBClient } from '$lib/repository/indexeddb';
 
 export const ssr = false;
 
 export async function load({ params }) {
-	const repository = await Repository();
+	const client = await IndexedDBClient();
+	const repository = await Repository(client);
 	const exercise = await repository.find(parseInt(params.id));
-    if(exercise) {
-        return {
-            exercise,
-			repository
-        };
-    }
+	if (exercise) {
+		return {
+			exercise,
+			repository,
+			client
+		};
+	}
 	error(404, 'Not found');
 }

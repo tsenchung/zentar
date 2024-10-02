@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { z, type SafeParseReturnType } from 'zod';
-	import { type PracticeRoutine, type Repository, PracticeRoutineSchema } from '$lib/repository/repository';
-
+	import {
+		type PracticeRoutine,
+		type Repository,
+		PracticeRoutineSchema
+	} from '$lib/repository/repository';
 
 	export let onCreate: () => void;
 	export let repository: Repository<PracticeRoutine>;
@@ -13,7 +16,7 @@
 		if (validation?.error) {
 			validationErrors = validation.error;
 		} else {
-			validationErrors = new z.ZodError<PracticeRoutine>([])
+			validationErrors = new z.ZodError<PracticeRoutine>([]);
 		}
 	}
 	$: errors = validationErrors.flatten();
@@ -38,8 +41,7 @@
 	}
 
 	function ZenForm(node: HTMLFormElement) {
-		node.addEventListener('submit', () => {
-		});
+		node.addEventListener('submit', () => {});
 	}
 
 	function hasError(key: keyof PracticeRoutine, errors: z.typeToFlattenedError<PracticeRoutine>) {
@@ -47,7 +49,7 @@
 	}
 </script>
 
-<form method="dialog" use:Form on:submit={submit} use:ZenForm>
+<form method="dialog" use:Form on:submit={submit} use:ZenForm novalidate>
 	<div class="flex flex-col gap-4 w-full mb-4">
 		<label class="form-control w-full">
 			<div class="label">

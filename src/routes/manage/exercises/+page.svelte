@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
 	import type { Exercise } from '$lib/repository/repository';
+	import { onDestroy } from 'svelte';
 	import { TextAidExercise } from './exercises';
 
 	export let data;
@@ -36,6 +37,10 @@
 			}
 		};
 	}
+
+	onDestroy(() => {
+		data.client.close();
+	});
 </script>
 
 <main>

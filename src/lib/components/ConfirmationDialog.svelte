@@ -3,7 +3,7 @@
 	export let id: string;
 </script>
 
-<dialog id={id} class="modal">
+<dialog {id} class="modal">
 	<div class="modal-box">
 		<div class="flex items-center mb-4">
 			<h3 class="text-lg font-bold flex-grow"><slot name="title" /></h3>

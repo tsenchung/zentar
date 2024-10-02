@@ -1,7 +1,7 @@
 import { openDB, type DBSchema, type IDBPDatabase, type StoreNames, type StoreValue } from 'idb';
 import type { Exercise, PracticeRoutine, PracticeRoutineExercise, Repository } from './repository';
 
-interface ZentarDB extends DBSchema {
+export interface ZentarDB extends DBSchema {
 	exercises: {
 		key: number;
 		value: Exercise;
@@ -13,17 +13,16 @@ interface ZentarDB extends DBSchema {
 	practice_routine_exercises: {
 		key: number;
 		value: PracticeRoutineExercise;
-		indexes: { 
+		indexes: {
 			byExerciseId: number;
 			byPracticeRoutineId: number;
 		};
-	},
+	};
 }
 
-export async function connect<Name extends StoreNames<ZentarDB>>(repository: Name):  Promise<Repository<StoreValue<ZentarDB, Name>>> {
-	const db = await openDB<ZentarDB>('zentar', 2, {
+export async function IndexedDBClient(): Promise<IDBPDatabase<ZentarDB>> {
+	return openDB<ZentarDB>('zentar', 2, {
 		upgrade(database, oldVersion) {
-			console.log(oldVersion);
 			switch (oldVersion) {
 				case 0:
 					setupExerciseStore(database);
@@ -34,14 +33,15 @@ export async function connect<Name extends StoreNames<ZentarDB>>(repository: Nam
 			}
 		}
 	});
+}
+
+export async function Repository<Name extends StoreNames<ZentarDB>>(
+	db: IDBPDatabase<ZentarDB>,
+	repository: Name
+): Promise<Repository<StoreValue<ZentarDB, Name>>> {
 	return {
 		async collection() {
 			return db.getAll(repository);
-		},
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		async byIndex(index: string, key: any): Promise<StoreValue<ZentarDB, Name>[]> {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			return db.getAllFromIndex(repository, index as any, key);
 		},
 		async find(id: number) {
 			return db.get(repository, id);
@@ -52,8 +52,45 @@ export async function connect<Name extends StoreNames<ZentarDB>>(repository: Nam
 		async delete(id: number) {
 			return db.delete(repository, id);
 		}
-	}
+	};
 }
+
+export const PracticeRoutineExerciseRepository = (db: IDBPDatabase<ZentarDB>) => {
+	return {
+		async getExercisesForPracticeRoutine(
+			practiceRoutineId: number
+		): Promise<[PracticeRoutineExercise, Exercise | undefined][]> {
+			const practiceRoutineExercises = await db.getAllFromIndex(
+				'practice_routine_exercises',
+				'byPracticeRoutineId',
+				practiceRoutineId
+			);
+			const result = await Promise.all(
+				practiceRoutineExercises.map(
+					async (
+						practiceRoutineExercise
+					): Promise<[PracticeRoutineExercise, Exercise | undefined]> => {
+						const exercise = await db.get('exercises', practiceRoutineExercise.exerciseId);
+						return [practiceRoutineExercise, exercise];
+					}
+				)
+			);
+			return result;
+		},
+		async addExerciseToPracticeRoutine(
+			practiceRoutineId: number,
+			exerciseId: number,
+			duration: number
+		) {
+			db.add('practice_routine_exercises', {
+				practiceRoutineId,
+				exerciseId,
+				duration,
+				order: 10
+			});
+		}
+	};
+};
 
 function setupExerciseStore(db: IDBPDatabase<ZentarDB>) {
 	return db.createObjectStore('exercises', { keyPath: 'id', autoIncrement: true });
@@ -64,7 +101,10 @@ function setupPracticeRoutineStore(db: IDBPDatabase<ZentarDB>) {
 }
 
 function setupPracticeRoutineExerciseStore(db: IDBPDatabase<ZentarDB>) {
-	const store = db.createObjectStore<'practice_routine_exercises'>('practice_routine_exercises', { keyPath: 'id', autoIncrement: true });
+	const store = db.createObjectStore<'practice_routine_exercises'>('practice_routine_exercises', {
+		keyPath: 'id',
+		autoIncrement: true
+	});
 	store.createIndex('byExerciseId', 'exerciseId');
 	store.createIndex('byPracticeRoutineId', 'practiceRoutineId');
 	return store;

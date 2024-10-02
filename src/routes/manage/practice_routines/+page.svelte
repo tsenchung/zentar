@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
-	
-	import type {PracticeRoutine} from '$lib/repository/repository';
+
+	import type { PracticeRoutine } from '$lib/repository/repository';
+	import { onDestroy } from 'svelte';
 	import CreatePracticeRoutineForm from './CreatePracticeRoutineForm.svelte';
 
 	export let data;
@@ -32,6 +33,9 @@
 		};
 	}
 
+	onDestroy(() => {
+		data.client.close();
+	});
 </script>
 
 <main>
@@ -79,7 +83,10 @@
 										/>
 									</svg>
 								</a>
-								<button class="btn btn-circle" on:click={showDeletePracticeRoutineDialog(practiceRoutine)}>
+								<button
+									class="btn btn-circle"
+									on:click={showDeletePracticeRoutineDialog(practiceRoutine)}
+								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -128,7 +135,10 @@
 		</div>
 	</dialog>
 
-	<ConfirmationDialog id="practice_routine_delete" onConfirm={deletePracticeRoutine(practiceRoutineToDelete)}>
+	<ConfirmationDialog
+		id="practice_routine_delete"
+		onConfirm={deletePracticeRoutine(practiceRoutineToDelete)}
+	>
 		<span slot="title">Delete practice routine?</span>
 		<span slot="message">Are you sure?</span>
 		<span slot="confirmation_button">Delete</span>

@@ -1,32 +1,9 @@
-import { connect } from '$lib/repository/indexeddb';
-import type {
-	Exercise,
-	PracticeRoutineExercise,
-	Repository as IRepository
-} from '$lib/repository/repository';
+import { Repository as RepositoryFactory, type ZentarDB } from '$lib/repository/indexeddb';
 
-export const Repository = () => connect('practice_routines');
+import type { IDBPDatabase } from 'idb';
 
-export const PracticeRoutineExerciseRepository = () => connect('practice_routine_exercises');
+export const Repository = (db: IDBPDatabase<ZentarDB>) =>
+	RepositoryFactory(db, 'practice_routines');
 
-export const ExerciseRepository = () => connect('exercises');
-
-type Tuple = [PracticeRoutineExercise, Exercise | undefined];
-
-export async function getExercisesForPracticeRoutine(
-	practiceRoutineId: number,
-	practiceRoutineExerciseRepository: IRepository<PracticeRoutineExercise>,
-	exerciseRepository: IRepository<Exercise>
-): Promise<Tuple[]> {
-	const practiceRoutineExercises = await practiceRoutineExerciseRepository.byIndex(
-		'byPracticeRoutineId',
-		practiceRoutineId
-	);
-	const result = await Promise.all(
-		practiceRoutineExercises.map(async (practiceRoutineExercise): Promise<Tuple> => {
-			const exercise = await exerciseRepository.find(practiceRoutineExercise.exerciseId);
-			return [practiceRoutineExercise, exercise];
-		})
-	);
-	return result;
-}
+export const ExerciseRepository = (db: IDBPDatabase<ZentarDB>) =>
+	RepositoryFactory(db, 'exercises');

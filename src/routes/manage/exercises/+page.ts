@@ -1,11 +1,14 @@
-import { Repository } from "./exercises";
+import { IndexedDBClient } from '$lib/repository/indexeddb';
+import { Repository } from './exercises';
 
 export const ssr = false;
 
 export async function load() {
-	const repository = await Repository();
+	const client = await IndexedDBClient();
+	const repository = await Repository(client);
 	return {
 		collection: await repository.collection(),
-		repository
+		repository,
+		client
 	};
 }

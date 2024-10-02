@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { getExercisesForPracticeRoutine } from '../practice_routine';
-	import { formatDuration  } from '$lib/time';
-	import type { Exercise } from '$lib/repository/repository';
-
+	import { formatDuration } from '$lib/time';
+	import { onDestroy } from 'svelte';
 
 	export let data;
 
@@ -14,19 +12,23 @@
 
 	async function addExercise() {
 		if (data.practiceRoutine.id) {
-			data.practiceRoutineExerciseRepository.save({
-				practiceRoutineId: data.practiceRoutine.id,
-				exerciseId: 3,
-				duration: 300,
-				order: data.exercises.length
-			});
-			data.exercises = await getExercisesForPracticeRoutine(data.practiceRoutine.id, data.practiceRoutineExerciseRepository, data.exerciseRepository);
+			data.practiceRoutineExerciseRepository.addExerciseToPracticeRoutine(
+				data.practiceRoutine.id,
+				3,
+				300
+			);
+			data.exercises = await data.practiceRoutineExerciseRepository.getExercisesForPracticeRoutine(
+				data.practiceRoutine.id
+			);
 		}
 	}
+
+	onDestroy(() => {
+		data.client.close();
+	});
 </script>
 
 <main>
-	<pre>{JSON.stringify(selectedExercise)}</pre>
 	<div class="flex justify-between">
 		<div>
 			<h1 class="text-2xl">{data.practiceRoutine.name}</h1>
@@ -44,10 +46,10 @@
 		</thead>
 		<tbody>
 			{#each data.exercises as exercise}
-			<tr>
-				<td>{exercise[1]?.title}</td>
-				<td>{formatDuration(exercise[0].duration)}</td>
-			</tr>
+				<tr>
+					<td>{exercise[1]?.title}</td>
+					<td>{formatDuration(exercise[0].duration)}</td>
+				</tr>
 			{/each}
 		</tbody>
 	</table>
@@ -73,19 +75,22 @@
 			</form>
 		</div>
 		<div>
-			<form id="practice_routine_add_exercise_form" method="dialog">
-				<select form="practice_routine_add_exercise_form" class="select w-full max-w-xs" required bind:value={selectedExercise}>
+			<form id="practice_routine_add_exercise_form" method="dialog" novalidate>
+				<select
+					form="practice_routine_add_exercise_form"
+					class="select w-full max-w-xs"
+					required
+					bind:value={selectedExercise}
+				>
 					<option disabled selected value="">Select an exercise</option>
-					{#each data.allExercises as exercise }
-					<option value={exercise.id}>
-						{exercise.title}
-					</option>
+					{#each data.allExercises as exercise}
+						<option value={exercise.id}>
+							{exercise.title}
+						</option>
 					{/each}
-				  </select>
-				  <p>
-					Duration
-				  </p>
-				  <div class="flex gap-4 items-center">
+				</select>
+				<p>Duration</p>
+				<div class="flex gap-4 items-center">
 					<input
 						type="number"
 						required
@@ -96,16 +101,16 @@
 					/>
 					:
 					<input
-					type="number"
-					required
-					min="0"
-					max="59"
-					placeholder="SS"
-					name="seconds"
-					class="input input-ghost w-28"
-				/>
-			</div>
-				  <button class="btn btn-primary">Add</button>
+						type="number"
+						required
+						min="0"
+						max="59"
+						placeholder="SS"
+						name="seconds"
+						class="input input-ghost w-28"
+					/>
+				</div>
+				<button class="btn btn-primary">Add</button>
 			</form>
 		</div>
 	</div>

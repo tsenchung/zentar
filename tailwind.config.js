@@ -18,7 +18,7 @@ export default {
 					...themes['light'],
 					primary: '#99dbff',
 					secondary: '#ee99ff',
-					error: 'oklch(51.32% 0.269 22.18)',
+					error: 'oklch(51.32% 0.269 22.18)'
 				}
 			}
 		]
