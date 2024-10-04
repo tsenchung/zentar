@@ -3,7 +3,7 @@
 	import { minorScale } from '$lib/theory/minorScale';
 	import { ToneClass } from '$lib/theory/tones';
 	import CircleOfFifths from '$lib/components/CircleOfFifths.svelte';
-	import ArrowRight from '$lib/components/ArrowRight.svelte';
+	import ArrowRight from '$lib/icons/ArrowRight.svelte';
 	import List from '$lib/components/List.svelte';
 	import ListItem from '$lib/components/ListItem.svelte';
 	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';

@@ -3,6 +3,7 @@ import { Repository, ExerciseRepository } from '../practice_routine';
 import { IndexedDBClient, PracticeRoutineExerciseRepository } from '$lib/repository/indexeddb';
 
 export const ssr = false;
+export const prerender = false;
 
 export async function load({ params }) {
 	const client = await IndexedDBClient();

@@ -2,8 +2,7 @@ import { Repository as RepositoryFactory, type ZentarDB } from '$lib/repository/
 import type { Exercise } from '$lib/repository/repository';
 import type { IDBPDatabase } from 'idb';
 
-export const TextAidExercise = (): Exercise => ({
-	id: 0,
+export const TextAidExercise = (): Omit<Exercise, 'id'> => ({
 	title: '',
 	aid: {
 		type: 'TextAid',

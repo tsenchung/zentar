@@ -1,26 +1,66 @@
 <script lang="ts">
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
+	import SelectControl from '$lib/components/controls/SelectControl.svelte';
+	import TextInputControl from '$lib/components/controls/TextInputControl.svelte';
+	import { FormFactory } from '$lib/form.js';
+	import Trash from '$lib/icons/Trash.svelte';
+	import XMark from '$lib/icons/XMark.svelte';
 	import { formatDuration } from '$lib/time';
 	import { onDestroy } from 'svelte';
+	import { z } from 'zod';
 
 	export let data;
+	let practiceRoutineExerciseToRemoveId: number;
+
+	const showRemoveExerciseDialog = (practiceRoutineExerciseId: number) => () => {
+		practiceRoutineExerciseToRemoveId = practiceRoutineExerciseId;
+		(<HTMLDialogElement>document.getElementById('practice_routine_exercise_remove')).showModal();
+	};
+
+	const removeExerciseFromPracticeRoutine = async () => {
+		await data.practiceRoutineExerciseRepository.removeExerciseFromPracticeRoutine(
+			practiceRoutineExerciseToRemoveId
+		);
+		data.exercises = await data.practiceRoutineExerciseRepository.getExercisesForPracticeRoutine(
+			data.practiceRoutine.id
+		);
+	};
+
+	const AddExerciseFormSchema = z.object({
+		exerciseId: z.coerce
+			.number({ message: 'Please select an exercise' })
+			.min(1, { message: 'Please select an exercise' }),
+		duration: z
+			.string()
+			.regex(/^(\d{2}:)\d{2}$/, { message: 'Regex bad' })
+			.transform((s, ctx) => {
+				const [minutes, seconds] = s.split(':').map((s) => parseInt(s, 10));
+				const duration = minutes * 60 + seconds;
+				if (duration === 0) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'Please input a duration of at least one second'
+					});
+					return z.NEVER;
+				} else {
+					return duration;
+				}
+			})
+	});
+
+	const { formState, Form, error } = FormFactory(AddExerciseFormSchema, async (formData) => {
+		await data.practiceRoutineExerciseRepository.addExerciseToPracticeRoutine(
+			data.practiceRoutine.id,
+			formData.exerciseId,
+			formData.duration
+		);
+		data.exercises = await data.practiceRoutineExerciseRepository.getExercisesForPracticeRoutine(
+			data.practiceRoutine.id
+		);
+	});
 
 	function showAddExercise() {
 		(<HTMLDialogElement>document.getElementById('practice_routine_add_exercise')).showModal();
-	}
-
-	let selectedExercise: string | number;
-
-	async function addExercise(ev: SubmitEvent) {
-		if (data.practiceRoutine.id) {
-			data.practiceRoutineExerciseRepository.addExerciseToPracticeRoutine(
-				data.practiceRoutine.id,
-				3,
-				300
-			);
-			data.exercises = await data.practiceRoutineExerciseRepository.getExercisesForPracticeRoutine(
-				data.practiceRoutine.id
-			);
-		}
 	}
 
 	onDestroy(() => {
@@ -40,15 +80,24 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th> Exercise </th>
-				<th> Duration </th>
+				<th>Exercise</th>
+				<th>Duration</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each data.exercises as exercise}
+			{#each data.exercises as [practiceRoutineExercise, exercise]}
 				<tr>
-					<td>{exercise[1]?.title}</td>
-					<td>{formatDuration(exercise[0].duration)}</td>
+					<td>{exercise?.title}</td>
+					<td>{formatDuration(practiceRoutineExercise.duration)}</td>
+					<td>
+						<button
+							class="btn btn-circle"
+							on:click={showRemoveExerciseDialog(practiceRoutineExercise.id)}
+						>
+							<Trash />
+						</button>
+					</td>
 				</tr>
 			{/each}
 		</tbody>
@@ -60,52 +109,41 @@
 		<div class="flex items-center mb-4">
 			<h3 class="text-lg font-bold flex-grow">Add Exercise</h3>
 			<form method="dialog">
-				<button class="btn btn-circle"
-					><svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="size-6"
-					>
-						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-					</svg>
+				<button class="btn btn-circle">
+					<XMark />
 				</button>
 			</form>
 		</div>
 		<div>
-			<form id="practice_routine_add_exercise_form" method="dialog" on:submit={addExercise}>
+			<form id="practice_routine_add_exercise_form" method="dialog" use:Form>
 				<div class="flex flex-col gap-4">
-					<label class="form-control w-full">
-						<div class="label">
-							<span class="label-text font-semibold">Exercise</span>
-						</div>
-						<select
-							form="practice_routine_add_exercise_form"
-							class="select w-full"
-							required
-							bind:value={selectedExercise}
-						>
+					<SelectControl
+						name="exerciseId"
+						errorElementId="add_practice_routine_exercise_exerciseId_error"
+						{formState}
+						{error}
+					>
+						<span class="label-text font-semibold" slot="label">Exercise</span>
+						<svelte:fragment slot="options">
 							<option disabled selected value="">Select an exercise</option>
 							{#each data.allExercises as exercise}
 								<option value={exercise.id}>
 									{exercise.title}
 								</option>
 							{/each}
-						</select>
-					</label>
-					<label class="form-control w-full">
-						<div class="label">
+						</svelte:fragment>
+					</SelectControl>
+					<TextInputControl
+						name="duration"
+						errorElementId="add_practice_routine_exercise_duration_error"
+						{formState}
+						{error}
+					>
+						<svelte:fragment slot="label">
 							<span class="label-text font-semibold">Duration</span>
 							<span class="label-text-alt text-neutral">MM:SS</span>
-						</div>
-						<input
-							type="text"
-							name="duration"
-							class="input input-bordered w-full aria-[invalid=true]:input-error"
-						/>
-					</label>
+						</svelte:fragment>
+					</TextInputControl>
 					<div>
 						<button class="btn btn-primary">Add</button>
 					</div>
@@ -114,3 +152,12 @@
 		</div>
 	</div>
 </dialog>
+
+<ConfirmationDialog
+	id="practice_routine_exercise_remove"
+	onConfirm={removeExerciseFromPracticeRoutine}
+>
+	<span slot="title">Remove exercise?</span>
+	<span slot="message">Are you sure?</span>
+	<span slot="confirmation_button">Remove</span>
+</ConfirmationDialog>

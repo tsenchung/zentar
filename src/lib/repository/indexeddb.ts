@@ -108,6 +108,9 @@ export const PracticeRoutineExerciseRepository = (db: IDBPDatabase<ZentarDB>) =>
 				duration,
 				order: exercises.length
 			});
+		},
+		async removeExerciseFromPracticeRoutine(practiceRoutineExerciseId: number) {
+			return db.delete('practice_routine_exercises', practiceRoutineExerciseId);
 		}
 	};
 };
