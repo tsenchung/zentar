@@ -1,10 +1,26 @@
-import { openDB, type DBSchema, type IDBPDatabase, type StoreKey, type StoreNames, type StoreValue } from 'idb';
+import {
+	openDB,
+	type DBSchema,
+	type IDBPDatabase,
+	type StoreKey,
+	type StoreNames,
+	type StoreValue
+} from 'idb';
 import type { Exercise, PracticeRoutine, PracticeRoutineExercise, Repository } from './repository';
 
-declare module "idb" {
-	type IDBPDatabaseExtends = Omit<IDBDatabase, 'createObjectStore' | 'deleteObjectStore' | 'transaction' | 'objectStoreNames'>;
+declare module 'idb' {
+	type IDBPDatabaseExtends = Omit<
+		IDBDatabase,
+		'createObjectStore' | 'deleteObjectStore' | 'transaction' | 'objectStoreNames'
+	>;
 	interface IDBPDatabase<DBTypes extends DBSchema | unknown = unknown> extends IDBPDatabaseExtends {
-		add<Name extends StoreNames<DBTypes>>(storeName: Name, value: Omit<StoreValue<DBTypes, Name>, 'id'>, key?: StoreKey<DBTypes, Name> | IDBKeyRange): Promise<StoreKey<DBTypes, Name>>;
+		add<Name extends StoreNames<DBTypes>>(
+			storeName: Name,
+			value: Omit<StoreValue<DBTypes, Name>, 'id'>,
+			key?: StoreKey<DBTypes, Name> | IDBKeyRange
+		): Promise<StoreKey<DBTypes, Name>>;
+
+		getAllKeysFromIndex(storeName: string, indexName: string, query?: number, count?: number): Promise<number[]>;
 	}
 }
 
@@ -26,6 +42,13 @@ export interface ZentarDB extends DBSchema {
 		};
 	};
 }
+
+
+const RELATIONS = new Map<string, {table: string, index: string}[]>([
+	['exercises', [{table: 'practice_routine_exercises', index: 'byExerciseId'}]],
+	['practice_routines', [{table: 'practice_routine_exercises', index: 'byPracticeRoutineId'}]]
+]);
+
 
 export async function IndexedDBClient(): Promise<IDBPDatabase<ZentarDB>> {
 	return openDB<ZentarDB>('zentar', 2, {
@@ -60,6 +83,15 @@ export async function Repository<Name extends StoreNames<ZentarDB>>(
 			await db.put(repository, item);
 		},
 		async delete(id: number) {
+			const dependentRelations = RELATIONS.get(repository) || [];
+			dependentRelations.forEach(async ({table, index}) => {
+				db.getAllKeysFromIndex('practice_routine_exercises', 'byExerciseId', id);
+				const keysToDelete = await db.getAllKeysFromIndex(table, index, id);
+				keysToDelete.forEach(async (key) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					await db.delete(table as any, key);
+				});
+			});
 			return db.delete(repository, id);
 		}
 	};

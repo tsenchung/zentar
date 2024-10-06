@@ -12,7 +12,7 @@ import '../app.css';
 			<div class="flex flex-1 justify-end px-2">
 				<div class="flex items-stretch">
 					<a class="btn btn-ghost rounded-btn" href="/">Visualize</a>
-					<a class="btn btn-ghost rounded-btn" href="/practice">Practice</a>
+					<a class="btn btn-ghost rounded-btn" href="/routines">Practice</a>
 					<div class="dropdown dropdown-end">
 						<div tabindex="0" role="button" class="btn btn-ghost rounded-btn">
 							<Cog6 />
@@ -23,7 +23,6 @@ import '../app.css';
 							class="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-64 p-2 shadow"
 						>
 							<li><a href="/manage/exercises">Manage Execises</a></li>
-							<li><a href="/manage/practice_routines">Manage Practice Routines</a></li>
 							<li><a href="/settings">Fretboard Settings</a></li>
 						</ul>
 					</div>

@@ -4,9 +4,10 @@
 	import type { PracticeRoutine } from '$lib/repository/repository';
 	import { onDestroy } from 'svelte';
 	import CreatePracticeRoutineForm from './CreatePracticeRoutineForm.svelte';
-	import Eye from '$lib/icons/Eye.svelte';
 	import Trash from '$lib/icons/Trash.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
+	import Play from '$lib/icons/Play.svelte';
+	import Pencil from '$lib/icons/Pencil.svelte';
 
 	export let data;
 
@@ -42,53 +43,53 @@
 </script>
 
 <main>
-	<div class="overflow-x-auto">
-		<div class="flex">
-			<div class="grow">
-				<h1 class="text-2xl">Practice Routines</h1>
-			</div>
-			<div>
-				<button class="btn btn-primary" on:click={showCreateExerciseModal}>New</button>
-			</div>
+	<div class="flex">
+		<div class="grow">
+			<h1 class="text-2xl">Routines</h1>
 		</div>
-		<p>Practice routines created here will appear in the practice page.</p>
-		<table class="table">
-			<thead>
-				<tr>
-					<td> Name </td>
-					<td> Actions </td>
-				</tr>
-			</thead>
-			<tbody>
-				{#each data.collection as practiceRoutine (practiceRoutine.id)}
-					<tr>
-						<td>{practiceRoutine.name}</td>
-						<td>
-							<div>
-								<a class="btn btn-circle" href="practice_routines/{practiceRoutine.id}">
-									<Eye />
-								</a>
-								<button
-									class="btn btn-circle"
-									on:click={showDeletePracticeRoutineDialog(practiceRoutine)}
-								>
-									<Trash />
-								</button>
-							</div>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+		<div>
+			<button class="btn btn-primary" on:click={showCreateExerciseModal}>New</button>
+		</div>
 	</div>
+	<table class="table">
+		<thead>
+			<tr>
+				<td>Name</td>
+				<td class="w-60">Actions</td>
+			</tr>
+		</thead>
+		<tbody>
+			{#each data.collection as practiceRoutine (practiceRoutine.id)}
+				<tr>
+					<td>{practiceRoutine.name}</td>
+					<td>
+						<div class="flex gap-2">
+							<a class="btn btn-circle" href="routines/{practiceRoutine.id}/practice">
+								<Play size="size-6" />
+							</a>
+							<a class="btn btn-circle" href="routines/{practiceRoutine.id}">
+								<Pencil />
+							</a>
+							<button
+								class="btn btn-circle"
+								on:click={showDeletePracticeRoutineDialog(practiceRoutine)}
+							>
+								<Trash />
+							</button>
+						</div>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+
 
 	<dialog id="practice_routine_create" class="modal">
 		<div class="modal-box w-96">
 			<div class="flex items-center mb-4">
 				<h3 class="text-lg font-bold flex-grow">New Practice Routine</h3>
 				<form method="dialog">
-					<button class="btn btn-circle"
-						>
+					<button class="btn btn-circle">
 						<XMark />
 					</button>
 				</form>
