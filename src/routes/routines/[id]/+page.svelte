@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
-	import SelectControl from '$lib/components/controls/SelectControl.svelte';
-	import TextInputControl from '$lib/components/controls/TextInputControl.svelte';
+	import Form from '$lib/components/form/Form.svelte';
+	import SelectControl from '$lib/components/form/controls/SelectControl.svelte';
+	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
 	import { FormFactory } from '$lib/form.js';
 	import Trash from '$lib/icons/Trash.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
@@ -48,7 +49,7 @@
 			})
 	});
 
-	const { formState, Form, error } = FormFactory(AddExerciseFormSchema, async (formData) => {
+	const { formState, FormAction, error } = FormFactory(AddExerciseFormSchema, async (formData) => {
 		await data.practiceRoutineExerciseRepository.addExerciseToPracticeRoutine(
 			data.practiceRoutine.id,
 			formData.exerciseId,
@@ -115,40 +116,42 @@
 			</form>
 		</div>
 		<div>
-			<form id="practice_routine_add_exercise_form" method="dialog" use:Form>
-				<div class="flex flex-col gap-4">
-					<SelectControl
-						name="exerciseId"
-						errorElementId="add_practice_routine_exercise_exerciseId_error"
-						{formState}
-						{error}
-					>
-						<span class="label-text font-semibold" slot="label">Exercise</span>
-						<svelte:fragment slot="options">
-							<option disabled selected value="">Select an exercise</option>
-							{#each data.allExercises as exercise}
-								<option value={exercise.id}>
-									{exercise.title}
-								</option>
-							{/each}
-						</svelte:fragment>
-					</SelectControl>
-					<TextInputControl
-						name="duration"
-						errorElementId="add_practice_routine_exercise_duration_error"
-						{formState}
-						{error}
-					>
-						<svelte:fragment slot="label">
-							<span class="label-text font-semibold">Duration</span>
-							<span class="label-text-alt text-neutral">MM:SS</span>
-						</svelte:fragment>
-					</TextInputControl>
-					<div>
-						<button class="btn btn-primary">Add</button>
-					</div>
+			<Form
+				id="practice_routine_add_exercise_form"
+				method="dialog"
+				{FormAction}
+				{formState}
+				{error}
+			>
+				<SelectControl
+					form="practice_routine_add_exercise_form"
+					name="exerciseId"
+					aria-required="true"
+					errorElementId="add_practice_routine_exercise_exerciseId_error"
+				>
+					<span class="label-text font-semibold" slot="label">Exercise</span>
+					<svelte:fragment slot="options">
+						<option disabled selected value="">Select an exercise</option>
+						{#each data.allExercises as exercise}
+							<option value={exercise.id}>
+								{exercise.title}
+							</option>
+						{/each}
+					</svelte:fragment>
+				</SelectControl>
+				<TextInputControl
+					type="text"
+					aria-required="true"
+					name="duration"
+					errorElementId="add_practice_routine_exercise_duration_error"
+				>
+					<span class="label-text font-semibold">Duration</span>
+					<span class="label-text-alt text-neutral">MM:SS</span>
+				</TextInputControl>
+				<div>
+					<button class="btn btn-primary">Add</button>
 				</div>
-			</form>
+			</Form>
 		</div>
 	</div>
 </dialog>

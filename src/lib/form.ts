@@ -4,6 +4,26 @@ import { writable } from 'svelte/store';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type allKeys<T> = T extends any ? keyof T : never;
 
+function toObject(formData: FormData): unknown {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const obj: any = {};
+	let nested = obj;
+	for(const [key, value] of formData.entries()) {
+		key.split('.').forEach((keyPathElement, i, keyPath) => {
+			if(keyPath.length == i + 1) {
+				nested[keyPathElement] = value;
+			} else {
+				nested = obj[keyPathElement];
+				if (nested === undefined) {
+					obj[keyPathElement] = {};
+					nested = obj[keyPathElement];
+				}
+			}
+		})
+	};
+	return obj;
+}
+
 export function FormFactory<
 	T extends z.ZodRawShape,
 	UnknownKeys extends z.UnknownKeysParam = z.UnknownKeysParam,
@@ -24,9 +44,10 @@ export function FormFactory<
 	>();
 	return {
 		formState: formStateStore,
-		Form(form: HTMLFormElement) {
+		FormAction(form: HTMLFormElement) {
 			const validate = () => {
-				return schema.safeParse(Object.fromEntries(new FormData(form).entries()));
+				toObject(new FormData(form));
+				return schema.safeParse(toObject(new FormData(form)));
 			};
 			let formState = {
 				validationResult: validate(),

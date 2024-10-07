@@ -10,23 +10,32 @@
 	lang="ts"
 	generics="T extends z.ZodRawShape, UnknownKeys extends z.UnknownKeysParam = z.UnknownKeysParam, Catchall extends z.ZodTypeAny = z.ZodTypeAny, Output = z.objectOutputType<T, Catchall, UnknownKeys>, Input = z.objectInputType<T, Catchall, UnknownKeys>"
 >
+
+	import { getContext } from 'svelte';
+	import type { HTMLSelectAttributes } from 'svelte/elements';
+
+
+	interface $$Props extends Omit<HTMLSelectAttributes, 'name'> {
+		errorElementId: string;
+		name: allKeys<Input>;
+	}
 	export let errorElementId: string;
-	export let formState: Writable<
+	 let formState: Writable<
 		| {
 				validationResult: z.SafeParseReturnType<Input, Output>;
 				dirty: { [P in allKeys<Input>]?: boolean | undefined };
 				submitted: boolean;
 		  }
 		| undefined
-	>;
-	export let error: (
+	> = getContext('formState');
+	let error: (
 		formState: {
 			validationResult: z.SafeParseReturnType<Input, Output>;
 			dirty: { [P in allKeys<Input>]?: boolean | undefined };
 			submitted: boolean;
 		},
 		name: allKeys<Input>
-	) => string | undefined;
+	) => string | undefined = getContext('error');
 	export let name: allKeys<Input>;
 
 	$: errorMessage = $formState ? error($formState, name) : undefined;
@@ -39,12 +48,11 @@
 		<slot name="label" />
 	</div>
 	<select
-		form="practice_routine_add_exercise_form"
 		class="select w-full"
 		name={propName}
-		aria-required="true"
 		aria-invalid={hasError}
 		aria-errormessage={hasError ? errorElementId : ''}
+		{...$$restProps}
 	>
 		<slot name="options" />
 	</select>

@@ -1,15 +1,17 @@
 <script lang="ts">
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
-	import type { Exercise } from '$lib/repository/repository';
+	import { ExerciseSchema, type Exercise } from '$lib/repository/repository';
 	import { onDestroy } from 'svelte';
 	import { TextAidExercise } from './exercises';
 	import Eye from '$lib/icons/Eye.svelte';
 	import Trash from '$lib/icons/Trash.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
+	import { FormFactory } from '$lib/form';
+	import Form from '$lib/components/form/Form.svelte';
+	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
 
 	export let data;
 
-	let newExercise: Omit<Exercise, 'id'> = TextAidExercise();
 	let exerciseToDelete: Exercise | undefined;
 
 	function showCreateExerciseModal() {
@@ -25,12 +27,10 @@
 	async function refresh() {
 		data.collection = await data.repository.collection();
 	}
-
-	async function createExercise() {
-		await data.repository.create(newExercise);
+	const { formState, error, FormAction } = FormFactory(ExerciseSchema.omit({id: true}), async (formData) => {
+		await data.repository.create(formData);
 		await refresh();
-		newExercise = TextAidExercise();
-	}
+	});
 
 	function deleteExercise(exerciseToDelete: Exercise | undefined) {
 		return async () => {
@@ -94,23 +94,16 @@
 					</button>
 				</form>
 			</div>
-			<form method="dialog" on:submit={createExercise}>
-				<div class="flex flex-col gap-4 w-full mb-4">
-					<input
-						type="text"
-						placeholder="Title"
-						required
-						bind:value={newExercise.title}
-						class="input input-bordered w-full"
-					/>
-					<textarea
-						class="textarea textarea-bordered font-mono w-full"
-						placeholder="Exercise"
-						bind:value={newExercise.aid.text}
-					></textarea>
+			<Form method="dialog" {formState} {error} {FormAction}>
+				<TextInputControl errorElementId="create_exercise_name_error" name="title">
+					<span class="label-text font-semibold">Name</span>
+				</TextInputControl>
+				<input hidden name="aid.type" value="TextAid"/>
+				<textarea class="textarea textarea-bordered font-mono w-full" name="aid.text" />
+				<div>
+					<button class="btn btn-primary">Create</button>
 				</div>
-				<button class="btn btn-primary">Create</button>
-			</form>
+			</Form>
 		</div>
 	</dialog>
 

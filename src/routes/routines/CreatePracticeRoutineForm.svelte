@@ -5,80 +5,30 @@
 		type Repository,
 		PracticeRoutineSchema
 	} from '$lib/repository/repository';
+	import Form from '$lib/components/form/Form.svelte';
+	import { FormFactory } from '$lib/form';
+	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
 
 	export let onCreate: () => void;
 	export let repository: Repository<PracticeRoutine>;
+		
+	const { formState, error, FormAction } = FormFactory(PracticeRoutineSchema.omit({id: true}), async (formData) => {
+		await repository.create(formData);
+		onCreate();
+	});
 
-	let validation: SafeParseReturnType<{}, Omit<PracticeRoutine, 'id'>> | undefined;
-	let validationErrors = new z.ZodError<PracticeRoutine>([]);
-	let errors: z.typeToFlattenedError<PracticeRoutine>;
-	$: {
-		if (validation?.error) {
-			validationErrors = validation.error;
-		} else {
-			validationErrors = new z.ZodError<PracticeRoutine>([]);
-		}
-	}
-	$: errors = validationErrors.flatten();
-	let form: HTMLFormElement;
-
-	function Form(node: HTMLFormElement) {
-		form = node;
-	}
-
-	function validate() {
-		const data = new FormData(form);
-		validation = PracticeRoutineSchema.omit({id: true}).safeParse(Object.fromEntries(data.entries()));
-	}
-
-	async function submit(ev: SubmitEvent) {
-		if (validation?.success) {
-			await repository.create(validation.data);
-			onCreate();
-		} else {
-			ev.preventDefault();
-		}
-	}
-
-	function ZenForm(node: HTMLFormElement) {
-		node.addEventListener('submit', () => {});
-	}
-
-	function hasError(key: keyof PracticeRoutine, errors: z.typeToFlattenedError<PracticeRoutine>) {
-		return !!(errors && errors.fieldErrors[key] && errors.fieldErrors[key].length > 0);
-	}
 </script>
 
-<form method="dialog" use:Form on:submit={submit} use:ZenForm novalidate>
-	<div class="flex flex-col gap-4 w-full mb-4">
-		<label class="form-control w-full">
-			<div class="label">
-				<span class="label-text">Name<span class="text-error">*</span></span>
-			</div>
-			<input
-				type="text"
-				name="name"
-				class="input input-bordered w-full aria-[invalid=true]:input-error"
-				aria-invalid={hasError('name', errors)}
-				aria-errormessage={hasError('name', errors) ? 'create_practice_routine_name_error' : ''}
-				on:blur={validate}
-			/>
-			<span id="create_practice_routine_name_error" class="error-message text-error"
-				>{errors.fieldErrors.name?.at(0) || ''}</span
-			>
-		</label>
-	</div>
-	<div class="flex justify-end">
+<Form method="dialog" {formState} {error} {FormAction}>
+	<TextInputControl
+		type="text"
+		aria-required="true"
+		name="name"
+		errorElementId="create_practice_routine_name_error"
+	>
+		<span class="label-text font-semibold">Name</span>
+	</TextInputControl>
+	<div>
 		<button class="btn btn-primary">Create</button>
 	</div>
-</form>
-
-<style>
-	.error-message {
-		visibility: hidden;
-	}
-
-	[aria-invalid='true'] ~ .error-message {
-		visibility: visible;
-	}
-</style>
+</Form>
