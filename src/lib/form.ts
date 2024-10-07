@@ -7,20 +7,19 @@ type allKeys<T> = T extends any ? keyof T : never;
 function toObject(formData: FormData): unknown {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const obj: any = {};
-	let nested = obj;
 	for(const [key, value] of formData.entries()) {
+		let nested = obj;
 		key.split('.').forEach((keyPathElement, i, keyPath) => {
 			if(keyPath.length == i + 1) {
 				nested[keyPathElement] = value;
 			} else {
-				nested = obj[keyPathElement];
-				if (nested === undefined) {
-					obj[keyPathElement] = {};
-					nested = obj[keyPathElement];
+				if (nested[keyPathElement] === undefined) {
+					nested[keyPathElement] = {};
 				}
+				nested = nested[keyPathElement];
 			}
-		})
-	};
+		});
+	}
 	return obj;
 }
 
