@@ -1,5 +1,5 @@
 <script lang="ts">
-	import XMark from "$lib/icons/XMark.svelte";
+	import XMark from '$lib/icons/XMark.svelte';
 
 	export let onConfirm: () => void;
 	export let id: string;
@@ -10,9 +10,7 @@
 		<div class="flex items-center mb-4">
 			<h3 class="text-lg font-bold flex-grow"><slot name="title" /></h3>
 			<form method="dialog">
-				<button class="btn btn-circle"
-					><XMark />
-				</button>
+				<button class="btn btn-circle"><XMark /> </button>
 			</form>
 		</div>
 		<p>

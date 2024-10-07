@@ -83,7 +83,6 @@
 		</tbody>
 	</table>
 
-
 	<dialog id="practice_routine_create" class="modal">
 		<div class="modal-box w-96">
 			<div class="flex items-center mb-4">

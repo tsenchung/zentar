@@ -11,12 +11,14 @@
 
 	export let onCreate: () => void;
 	export let repository: Repository<PracticeRoutine>;
-		
-	const { formState, error, FormAction } = FormFactory(PracticeRoutineSchema.omit({id: true}), async (formData) => {
-		await repository.create(formData);
-		onCreate();
-	});
 
+	const { formState, error, FormAction } = FormFactory(
+		PracticeRoutineSchema.omit({ id: true }),
+		async (formData) => {
+			await repository.create(formData);
+			onCreate();
+		}
+	);
 </script>
 
 <Form method="dialog" {formState} {error} {FormAction}>

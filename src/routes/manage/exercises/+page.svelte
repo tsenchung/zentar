@@ -27,10 +27,13 @@
 	async function refresh() {
 		data.collection = await data.repository.collection();
 	}
-	const { formState, error, FormAction } = FormFactory(ExerciseSchema.omit({id: true}), async (formData) => {
-		await data.repository.create(formData);
-		await refresh();
-	});
+	const { formState, error, FormAction } = FormFactory(
+		ExerciseSchema.omit({ id: true }),
+		async (formData) => {
+			await data.repository.create(formData);
+			await refresh();
+		}
+	);
 
 	function deleteExercise(exerciseToDelete: Exercise | undefined) {
 		return async () => {
@@ -98,7 +101,7 @@
 				<TextInputControl errorElementId="create_exercise_name_error" name="title">
 					<span class="label-text font-semibold">Name</span>
 				</TextInputControl>
-				<input hidden name="aid.type" value="TextAid"/>
+				<input hidden name="aid.type" value="TextAid" />
 				<textarea class="textarea textarea-bordered font-mono w-full" name="aid.text" />
 				<div>
 					<button class="btn btn-primary">Create</button>

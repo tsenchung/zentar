@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Cog6 from '$lib/icons/Cog6.svelte';
-import '../app.css';
+	import '../app.css';
 </script>
 
 <div class="flex flex-col min-h-screen">

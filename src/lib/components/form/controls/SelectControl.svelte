@@ -10,17 +10,15 @@
 	lang="ts"
 	generics="T extends z.ZodRawShape, UnknownKeys extends z.UnknownKeysParam = z.UnknownKeysParam, Catchall extends z.ZodTypeAny = z.ZodTypeAny, Output = z.objectOutputType<T, Catchall, UnknownKeys>, Input = z.objectInputType<T, Catchall, UnknownKeys>"
 >
-
 	import { getContext } from 'svelte';
 	import type { HTMLSelectAttributes } from 'svelte/elements';
-
 
 	interface $$Props extends Omit<HTMLSelectAttributes, 'name'> {
 		errorElementId: string;
 		name: allKeys<Input>;
 	}
 	export let errorElementId: string;
-	 let formState: Writable<
+	let formState: Writable<
 		| {
 				validationResult: z.SafeParseReturnType<Input, Output>;
 				dirty: { [P in allKeys<Input>]?: boolean | undefined };
