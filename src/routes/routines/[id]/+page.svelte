@@ -33,7 +33,10 @@
 			.min(1, { message: 'Please select an exercise' }),
 		duration: z
 			.string()
-			.regex(/^(\d{2}:)\d{2}$/, { message: 'Regex bad' })
+			.regex(/^\d+:[0-5][0-9]$/, {
+				message:
+					'Please make sure the duration matches the mm:ss format. Examples: 00:59 (59 seconds), 1:00 (one minute), 10:30 (10 minutes, 30 seconds)'
+			})
 			.transform((s, ctx) => {
 				const [minutes, seconds] = s.split(':').map((s) => parseInt(s, 10));
 				const duration = minutes * 60 + seconds;
@@ -146,7 +149,7 @@
 					errorElementId="add_practice_routine_exercise_duration_error"
 				>
 					<span class="label-text font-semibold">Duration</span>
-					<span class="label-text-alt text-neutral">MM:SS</span>
+					<span class="label-text-alt text-neutral">mm:ss</span>
 				</TextInputControl>
 				<div>
 					<button class="btn btn-primary">Add</button>
