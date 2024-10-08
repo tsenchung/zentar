@@ -2,11 +2,9 @@
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
 	import { ExerciseSchema, type Exercise } from '$lib/repository/repository';
 	import { onDestroy } from 'svelte';
-	import { TextAidExercise } from './exercises';
 	import Eye from '$lib/icons/Eye.svelte';
 	import Trash from '$lib/icons/Trash.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
-	import { FormFactory } from '$lib/form';
 	import Form from '$lib/components/form/Form.svelte';
 	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
 	import { z } from 'zod';

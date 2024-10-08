@@ -3,7 +3,6 @@
 	import Form from '$lib/components/form/Form.svelte';
 	import SelectControl from '$lib/components/form/controls/SelectControl.svelte';
 	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
-	import { FormFactory } from '$lib/form.js';
 	import Trash from '$lib/icons/Trash.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
 	import { formatDuration } from '$lib/time';

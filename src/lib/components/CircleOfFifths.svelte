@@ -39,7 +39,7 @@
 	</style>
 
 	<g transform="translate(150,150)">
-		{#each arcs as arc, i}
+		{#each arcs as arc}
 			<CircleofFifthsElement
 				r1={85}
 				r2={145}
