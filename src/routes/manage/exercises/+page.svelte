@@ -9,6 +9,7 @@
 	import { FormFactory } from '$lib/form';
 	import Form from '$lib/components/form/Form.svelte';
 	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
+	import { z } from 'zod';
 
 	export let data;
 
@@ -27,13 +28,13 @@
 	async function refresh() {
 		data.collection = await data.repository.collection();
 	}
-	const { formState, error, FormAction } = FormFactory(
-		ExerciseSchema.omit({ id: true }),
-		async (formData) => {
-			await data.repository.create(formData);
-			await refresh();
-		}
-	);
+
+	const AddExerciseSchema = ExerciseSchema.omit({ id: true });
+
+	async function addExercise(formData: z.infer<typeof AddExerciseSchema>) {
+		await data.repository.create(formData);
+		await refresh();
+	}
 
 	function deleteExercise(exerciseToDelete: Exercise | undefined) {
 		return async () => {
@@ -97,7 +98,7 @@
 					</button>
 				</form>
 			</div>
-			<Form method="dialog" {formState} {error} {FormAction}>
+			<Form method="dialog" schema={AddExerciseSchema} onSubmit={addExercise}>
 				<TextInputControl errorElementId="create_exercise_name_error" name="title">
 					<span class="label-text font-semibold">Name</span>
 				</TextInputControl>

@@ -52,7 +52,7 @@
 			})
 	});
 
-	const { formState, FormAction, error } = FormFactory(AddExerciseFormSchema, async (formData) => {
+	async function addExerciseToPracticeRoutine(formData: z.infer<typeof AddExerciseFormSchema>) {
 		await data.practiceRoutineExerciseRepository.addExerciseToPracticeRoutine(
 			data.practiceRoutine.id,
 			formData.exerciseId,
@@ -61,7 +61,7 @@
 		data.exercises = await data.practiceRoutineExerciseRepository.getExercisesForPracticeRoutine(
 			data.practiceRoutine.id
 		);
-	});
+	}
 
 	function showAddExercise() {
 		(<HTMLDialogElement>document.getElementById('practice_routine_add_exercise')).showModal();
@@ -122,9 +122,8 @@
 			<Form
 				id="practice_routine_add_exercise_form"
 				method="dialog"
-				{FormAction}
-				{formState}
-				{error}
+				schema={AddExerciseFormSchema}
+				onSubmit={addExerciseToPracticeRoutine}
 			>
 				<SelectControl
 					form="practice_routine_add_exercise_form"

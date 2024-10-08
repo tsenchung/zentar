@@ -12,16 +12,15 @@
 	export let onCreate: () => void;
 	export let repository: Repository<PracticeRoutine>;
 
-	const { formState, error, FormAction } = FormFactory(
-		PracticeRoutineSchema.omit({ id: true }),
-		async (formData) => {
-			await repository.create(formData);
-			onCreate();
-		}
-	);
+	const CreatePracticeRoutineSchema = PracticeRoutineSchema.omit({ id: true });
+
+	async function submit(formData: z.infer<typeof CreatePracticeRoutineSchema>) {
+		await repository.create(formData);
+		onCreate();
+	}
 </script>
 
-<Form method="dialog" {formState} {error} {FormAction}>
+<Form method="dialog" schema={CreatePracticeRoutineSchema} onSubmit={submit}>
 	<TextInputControl
 		type="text"
 		aria-required="true"

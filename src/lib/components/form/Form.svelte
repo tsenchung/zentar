@@ -11,49 +11,19 @@
 	generics="T extends z.ZodRawShape, UnknownKeys extends z.UnknownKeysParam = z.UnknownKeysParam, Catchall extends z.ZodTypeAny = z.ZodTypeAny, Output = z.objectOutputType<T, Catchall, UnknownKeys>, Input = z.objectInputType<T, Catchall, UnknownKeys>"
 >
 	import { setContext } from 'svelte';
-
 	import type { HTMLFormAttributes } from 'svelte/elements';
+
+	import { FormFactory } from '$lib/form';
+
 	interface $$Props extends HTMLFormAttributes {
-		formState: Writable<
-			| {
-					validationResult: z.SafeParseReturnType<Input, Output>;
-					dirty: { [P in allKeys<Input>]?: boolean | undefined };
-					submitted: boolean;
-			  }
-			| undefined
-		>;
-
-		error: (
-			formState: {
-				validationResult: z.SafeParseReturnType<Input, Output>;
-				dirty: { [P in allKeys<Input>]?: boolean | undefined };
-				submitted: boolean;
-			},
-			name: allKeys<Input>
-		) => string | undefined;
-
-		FormAction: (form: HTMLFormElement) => void;
+		schema: z.ZodObject<T, UnknownKeys, Catchall, Output, Input>;
+		onSubmit: (formData: Output) => Promise<void>;
 	}
 
-	export let formState: Writable<
-		| {
-				validationResult: z.SafeParseReturnType<Input, Output>;
-				dirty: { [P in allKeys<Input>]?: boolean | undefined };
-				submitted: boolean;
-		  }
-		| undefined
-	>;
+	export let schema: z.ZodObject<T, UnknownKeys, Catchall, Output, Input>;
+	export let onSubmit: (formData: Output) => Promise<void>;
 
-	export let error: (
-		formState: {
-			validationResult: z.SafeParseReturnType<Input, Output>;
-			dirty: { [P in allKeys<Input>]?: boolean | undefined };
-			submitted: boolean;
-		},
-		name: allKeys<Input>
-	) => string | undefined;
-
-	export let FormAction: (form: HTMLFormElement) => void;
+	const { formState, error, FormAction } = FormFactory(schema, onSubmit);
 
 	setContext('formState', formState);
 	setContext('error', error);
