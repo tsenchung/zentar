@@ -9,6 +9,7 @@
 	stroke-width="1.5"
 	stroke="currentColor"
 	class={size}
+	aria-hidden="true"
 >
 	<path
 		stroke-linecap="round"

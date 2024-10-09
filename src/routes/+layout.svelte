@@ -14,7 +14,7 @@
 					<a class="btn btn-ghost rounded-btn" href="/">Visualize</a>
 					<a class="btn btn-ghost rounded-btn" href="/routines">Practice</a>
 					<div class="dropdown dropdown-end">
-						<div tabindex="0" role="button" class="btn btn-ghost rounded-btn">
+						<div tabindex="0" role="button" class="btn btn-ghost rounded-btn" aria-label="Settings Menu">
 							<Cog6 />
 						</div>
 						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->

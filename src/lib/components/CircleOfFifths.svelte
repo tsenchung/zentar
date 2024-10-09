@@ -32,6 +32,7 @@
 </script>
 
 <svg width="300" height="300">
+	<title>Circle of Fifths</title>
 	<g transform="translate(150,150)">
 		{#each arcs as arc}
 			<CircleofFifthsElement

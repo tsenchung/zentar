@@ -7,12 +7,14 @@
 	export let active: boolean;
 	export let onclick: () => void;
 	export let tabindex: number;
+	export let ariaLabel: string;
 </script>
 
 <path
 	role="button"
 	{tabindex}
 	class="btn arc {active ? 'btn-primary' : 'inactive'}"
+	aria-label={ariaLabel}
 	on:click={onclick}
 	on:keypress={(ev) => {
 		if (ev.key == 'Enter') {

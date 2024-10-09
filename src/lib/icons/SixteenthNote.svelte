@@ -12,6 +12,7 @@
 	class="size-8"
 	stroke="currentColor"
 	fill="currentColor"
+	aria-hidden="true"
 	viewBox="0 0 15.697994 26.906273"
 	version="1.1"
 	sodipodi:docname="Semicroma.svg"
