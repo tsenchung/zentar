@@ -4,18 +4,19 @@
 	import ChevronDoubleLeft from '$lib/icons/ChevronDoubleLeft.svelte';
 	import ChevronDoubleRight from '$lib/icons/ChevronDoubleRight.svelte';
 	import { onDestroy } from 'svelte';
-	import ExerciseTimeControls from './ExerciseTimeControls.svelte';
 
 	export let data;
-	let autoplay: boolean = false;
 	let currentIndex = 0;
 	$: currentTuple = data.exercises[currentIndex];
 	$: currentRoutineExercise = currentTuple[0];
 	$: currentExercise = currentTuple[1];
+	let done = false;
 
 	function nextExercise() {
 		if (currentIndex + 1 < data.exercises.length) {
 			currentIndex = currentIndex + 1;
+		} else {
+			done = true;
 		}
 	}
 
@@ -32,6 +33,21 @@
 
 <main>
 	<h1 class="text-2xl">{data.practiceRoutine.name}</h1>
+	<div class="flex justify-between items-start mt-4">
+		<button class="btn btn-circle" aria-label="Previous exercise" on:click={previousExercise}>
+			<ChevronDoubleLeft />
+		</button>
+		<div class="overflow-x-auto">
+			<ul class="steps steps-vertical lg:steps-horizontal">
+				{#each data.exercises as exercise, i}
+					<li class="step {i <= currentIndex ? 'step-primary' : ''}"></li>
+				{/each}
+			</ul>
+		</div>
+		<button class="btn btn-circle" on:click={nextExercise}>
+			<ChevronDoubleRight />
+		</button>
+	</div>
 	<div>
 		<div class="exercise flex flex-col items-center mb-8">
 			<div class="mb-4">
@@ -44,31 +60,16 @@
 			</section>
 		</div>
 	</div>
-	{#key currentRoutineExercise.id}
-		<ExerciseTimeControls
-			duration={currentRoutineExercise.duration * 1000}
-			{autoplay}
-			onAutoplayToggled={(ap) => {autoplay = ap}}
-			onPrevious={previousExercise}
-			onNext={nextExercise}
-		/>
-	{/key}
-	<br />
-	<div class="flex">
-		<div class="grow">
-			<div class="metronome w-5/12 h-56"><Metronome /></div>
+	<div class="divider"></div>
+	<div class="grid grid-cols-2 gap-4">
+		<div class="timer grow">
+			{#key currentRoutineExercise.id}
+				<Timer duration={currentRoutineExercise.duration * 1000} onEnd={nextExercise} />
+			{/key}
 		</div>
-		<div>
-			<h3 class="text-2xl">Exercises</h3>
-			<ul class="steps steps-vertical w-96 h-56 overflow-y-auto">
-				{#each data.exercises as exercise, i}
-					<li class="step {i <= currentIndex ? 'step-primary' : ''}">
-						<button on:click={() => { currentIndex = i; }}>
-							{exercise[1]?.title}
-						</button>
-					</li>
-				{/each}
-			</ul>
-		</div>
+		<div class="metronome w-10/12 h-56"><Metronome /></div>
 	</div>
+	{#if done}
+		<span>Wahooooo</span>
+	{/if}
 </main>

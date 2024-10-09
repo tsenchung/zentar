@@ -22,7 +22,7 @@
 							tabindex="0"
 							class="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-64 p-2 shadow"
 						>
-							<li><a href="/manage/exercises">Manage Execises</a></li>
+							<li><a href="/manage/exercises">Manage Exercises</a></li>
 							<li><a href="/settings">Fretboard Settings</a></li>
 						</ul>
 					</div>

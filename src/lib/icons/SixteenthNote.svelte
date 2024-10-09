@@ -10,9 +10,10 @@
 	xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
 	xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
 	class="size-8"
+	stroke="currentColor"
+	fill="currentColor"
 	viewBox="0 0 15.697994 26.906273"
 	version="1.1"
-	id="svg4416"
 	sodipodi:docname="Semicroma.svg"
 	inkscape:version="0.92.3 (2405546, 2018-03-11)"
 >
@@ -57,7 +58,7 @@
 				id="polyline62"
 				points="1071.08,444.895 1071.08,361.417"
 				class="Stem"
-				style="fill:none;stroke:#000000;stroke-width:2.73000002;stroke-linejoin:bevel"
+				style="fill:none;stroke-width:2.73000002;stroke-linejoin:bevel"
 			/>
 			<path
 				id="path88"

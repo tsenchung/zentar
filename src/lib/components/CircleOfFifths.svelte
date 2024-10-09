@@ -32,12 +32,6 @@
 </script>
 
 <svg width="300" height="300">
-	<style>
-		.arc:hover {
-			stroke-width: 2;
-		}
-	</style>
-
 	<g transform="translate(150,150)">
 		{#each arcs as arc}
 			<CircleofFifthsElement

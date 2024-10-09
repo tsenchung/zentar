@@ -2,9 +2,10 @@
 <!-- svelte-ignore illegal-attribute-character -->
 
 <svg
-	id="svg5"
 	viewBox="0 0 14.566 41.17"
 	class="size-8"
+	stroke="currentColor"
+	fill="currentColor"
 	version="1.0"
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:cc="http://creativecommons.org/ns#"
@@ -26,6 +27,6 @@
 			d="m451.09 49.39c3.3958-1.82 5.2053-5.1146 4.0922-7.593-1.1873-2.6436-5.267-3.3897-9.1066-1.6654-3.8396 1.7244-5.9922 5.2694-4.8049 7.913 1.1873 2.6436 5.267 3.3897 9.1066 1.6654 0.23997-0.10777 0.48628-0.19874 0.71268-0.32007z"
 			fill-rule="evenodd"
 		/>
-		<path id="path11058" d="m454.73 43.056v-33.588" fill="none" stroke="#000" stroke-width="1.5" />
+		<path id="path11058" d="m454.73 43.056v-33.588" fill="none" stroke-width="1.5" />
 	</g>
 </svg>

@@ -88,18 +88,23 @@
 	});
 </script>
 
+<div class="flex text-2xl gap-4 mb-4">
+	Metronome
+<label class="swap text-primary font-bold">
+	<input type="checkbox" on:click={togglePlay} autocomplete="off" />
+	<div class="swap-on">
+		ON
+	</div>
+	<div class="swap-off">
+		OFF
+	</div>
+</label>
+</div>
 <div class="flex justify-between items-center mb-10">
 	<div class="flex items-center gap-4">
-		<label class="swap">
-			<input type="checkbox" on:click={togglePlay} autocomplete="off" />
-			<div class="btn btn-circle size-24 swap-on">
-				<Pause />
-			</div>
-			<div class="btn btn-circle size-24 swap-off">
-				<Play />
-			</div>
-		</label>
-		<span class="text-5xl">{bpm} BPM</span>
+		<div class="flex items-end gap-2">
+			<span class="text-5xl font-mono">{bpm}</span><span class="text-3xl">BPM</span>
+		</div>
 	</div>
 	<div class="flex gap-4">
 		<div class="join">
