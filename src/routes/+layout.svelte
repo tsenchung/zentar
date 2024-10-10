@@ -30,7 +30,7 @@
 			</div>
 		</nav>
 	</header>
-	<div class="px-6 flex-grow">
+	<div class="px-6 pb-4 flex-grow">
 		<slot></slot>
 	</div>
 
