@@ -5,6 +5,7 @@
 	import ChevronDoubleRight from '$lib/icons/ChevronDoubleRight.svelte';
 	import { onDestroy } from 'svelte';
 	import ExerciseTimeControls from './ExerciseTimeControls.svelte';
+	import Bars3 from '$lib/icons/Bars3.svelte';
 
 	export let data;
 	let autoplay: boolean = false;
@@ -31,12 +32,8 @@
 </script>
 
 <main>
-	<h1 class="text-2xl">{data.practiceRoutine.name}</h1>
 	<div>
 		<div class="exercise flex flex-col items-center mb-8">
-			<div class="mb-4">
-				<h2 class="text-3xl">{currentExercise?.title}</h2>
-			</div>
 			<section class="overflow-scroll">
 				<pre class="inline text-lg">
 {currentExercise?.aid.text}
@@ -53,10 +50,14 @@
 			onNext={nextExercise}
 		/>
 	{/key}
-	<br />
-	<div class="flex">
+	<div class="flex flex-row mt-4">
 		<div class="grow">
-			<div class="metronome w-5/12 h-56"><Metronome /></div>
+		<div class="flex justify-start items-center gap-4 h-5">
+			<h1 class="text-2xl">{data.practiceRoutine.name}</h1>
+			/
+			<h2 class="text-2xl">{currentExercise?.title}</h2>
+		</div>
+		<div class="metronome w-5/12 h-56 mt-8"><Metronome /></div>
 		</div>
 		<div>
 			<h3 class="text-2xl">Exercises</h3>
@@ -69,6 +70,12 @@
 					</li>
 				{/each}
 			</ul>
+		</div>
+	</div>
+	
+	<div class="flex">
+		<div class="grow">
+			
 		</div>
 	</div>
 </main>

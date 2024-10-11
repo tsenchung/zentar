@@ -73,23 +73,23 @@
 ></progress>
 <div class="controls flex justify-between gap-4">
 	<div>
-		<button class="btn" aria-label="Pause" on:click={onPrevious}>
+		<button class="btn btn-sm" aria-label="Pause" on:click={onPrevious}>
 			<ChevronDoubleLeft />
 		</button>
 		{#if state === 'playing'}
-			<button class="btn" aria-label="Pause" on:click={pause}>
+			<button class="btn btn-sm" aria-label="Pause" on:click={pause}>
 				<Pause size="size-6" />
 			</button>
 		{:else if state === 'paused'}
-			<button class="btn" aria-label="Play" on:click={resume}>
+			<button class="btn btn-sm" aria-label="Play" on:click={resume}>
 				<Play size="size-6" />
 			</button>
 		{:else}
-			<button class="btn" aria-label="Restart" on:click={resume}>
+			<button class="btn btn-sm" aria-label="Restart" on:click={resume}>
 				<ArrowPath />
 			</button>
 		{/if}
-		<button class="btn" aria-label="Pause" on:click={onNext}>
+		<button class="btn btn-sm" aria-label="Pause" on:click={onNext}>
 			<ChevronDoubleRight />
 		</button>
 	</div>
