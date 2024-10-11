@@ -2,7 +2,7 @@
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	version="1.0"
-	class="size-8"
+	class="size-6"
 	viewBox="0 0 90 90"
 	stroke="currentColor"
 	fill="currentColor"

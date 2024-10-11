@@ -3,7 +3,7 @@
 
 <svg
 	viewBox="0 0 14.566 41.17"
-	class="size-8"
+	class="size-6"
 	stroke="currentColor"
 	fill="currentColor"
 	aria-hidden="true"

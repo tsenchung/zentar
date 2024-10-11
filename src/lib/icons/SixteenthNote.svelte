@@ -9,7 +9,7 @@
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
 	xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-	class="size-8"
+	class="size-6"
 	stroke="currentColor"
 	fill="currentColor"
 	aria-hidden="true"
