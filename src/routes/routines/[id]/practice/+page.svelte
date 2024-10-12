@@ -2,13 +2,14 @@
 	import Metronome from '$lib/components/metronome/Metronome.svelte';
 	import { onDestroy } from 'svelte';
 	import ExerciseTimeControls from './ExerciseTimeControls.svelte';
+	import Header from '$lib/components/Header.svelte';
 
 	export let data;
 	let autoplay: boolean = false;
 	let currentIndex = 0;
-	$: currentTuple = data.exercises[currentIndex];
-	$: currentRoutineExercise = currentTuple[0];
-	$: currentExercise = currentTuple[1];
+	$: currentTuple = data.exercises.length > 0 ? data.exercises[currentIndex] : undefined;
+	$: currentRoutineExercise = currentTuple ? currentTuple[0] : undefined;
+	$: currentExercise = currentTuple ? currentTuple[1] : undefined;
 
 	function nextExercise() {
 		if (currentIndex + 1 < data.exercises.length) {
@@ -40,52 +41,82 @@
 	});
 </script>
 
-<main>
-	<div class="exercise bg-slate-950 text-slate-200">
-		<div class="flex justify-center items-center p-4 min-h-[50lvh]">
-			<section class="overflow-scroll">
-				<pre class="inline text-lg">
+<svelte:head>
+	<title>Practice - {data.practiceRoutine.name}</title>
+</svelte:head>
+{#if data.exercises.length > 0}
+	<main>
+		<Header>
+			<ul slot="breadcrumbs">
+				<li><a href="/routines">Routines</a></li>
+				<li><a href="/routines/{data.practiceRoutine.id}">{data.practiceRoutine.name}</a></li>
+				<li>Practice</li>
+			</ul>
+			<svelte:fragment slot="title">{data.practiceRoutine.name}</svelte:fragment>
+		</Header>
+		<section class="exercise bg-slate-950 text-slate-200">
+			<h2 class="sr-only">{currentExercise?.title}</h2>
+			<div class="flex justify-center items-center p-4 min-h-[50lvh]">
+				<section class="overflow-scroll">
+					<pre class="inline text-lg">
 {currentExercise?.aid.text}
 				</pre>
-			</section>
-		</div>
-		{#key currentRoutineExercise.id}
-			<ExerciseTimeControls
-				duration={currentRoutineExercise.duration * 1000}
-				{autoplay}
-				onAutoplayToggled={(ap) => {
-					autoplay = ap;
-				}}
-				onPrevious={previousExercise}
-				onNext={nextExercise}
-			/>
-		{/key}
-	</div>
-
-	<div class="flex flex-row mt-4">
-		<div class="grow">
-			<div class="flex justify-start items-center gap-4 h-5">
-				<h1 class="text-2xl">{data.practiceRoutine.name}</h1>
-				/
-				<h2 class="text-2xl">{currentExercise?.title}</h2>
+				</section>
 			</div>
-			<div class="metronome w-5/12 h-56 mt-8"><Metronome /></div>
+			{#if currentRoutineExercise}
+				{#key currentRoutineExercise.id}
+					<ExerciseTimeControls
+						duration={currentRoutineExercise.duration * 1000}
+						{autoplay}
+						onAutoplayToggled={(ap) => {
+							autoplay = ap;
+						}}
+						onPrevious={previousExercise}
+						onNext={nextExercise}
+					/>
+				{/key}
+			{/if}
+		</section>
+
+		<div class="flex flex-row mt-4">
+			<div class="grow">
+				<div class="flex justify-start items-center gap-4 h-5">
+					<span class="text-2xl" aria-hidden="true">{currentExercise?.title}</span>
+				</div>
+				<div class="metronome w-5/12 h-56 mt-8"><Metronome /></div>
+			</div>
+			<div>
+				<h3 class="text-2xl">Exercises</h3>
+				<ul class="exercises steps steps-vertical w-96 h-56 overflow-y-auto">
+					{#each data.exercises as exercise, i}
+						<li class="step {i <= currentIndex ? 'step-primary' : ''}">
+							<button
+								on:click={() => {
+									currentIndex = i;
+								}}
+							>
+								{exercise[1]?.title}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</div>
 		</div>
-		<div>
-			<h3 class="text-2xl">Exercises</h3>
-			<ul class="exercises steps steps-vertical w-96 h-56 overflow-y-auto">
-				{#each data.exercises as exercise, i}
-					<li class="step {i <= currentIndex ? 'step-primary' : ''}">
-						<button
-							on:click={() => {
-								currentIndex = i;
-							}}
-						>
-							{exercise[1]?.title}
-						</button>
-					</li>
-				{/each}
+	</main>
+{:else}
+	<main>
+		<Header>
+			<ul slot="breadcrumbs">
+				<li><a href="/routines">Routines</a></li>
+				<li><a href="/routines/{data.practiceRoutine.id}">{data.practiceRoutine.name}</a></li>
+				<li>Practice</li>
 			</ul>
-		</div>
-	</div>
-</main>
+			<svelte:fragment slot="title">{data.practiceRoutine.name}</svelte:fragment>
+		</Header>
+		<p>
+			This routine does not have any exercises yet.
+			<a class="link link-primary" href="/routines/{data.practiceRoutine.id}"> Click&nbsp;here </a>
+			to add exercises to the routine.
+		</p>
+	</main>
+{/if}
