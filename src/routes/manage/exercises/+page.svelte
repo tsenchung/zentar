@@ -65,7 +65,6 @@
 			>
 		</svelte:fragment>
 	</Header>
-	<p class="text-gray-600">Exercises created here can be added to your practice routines.</p>
 	<table class="table">
 		<thead>
 			<tr>
