@@ -8,12 +8,14 @@
 	import XMark from '$lib/icons/XMark.svelte';
 	import Play from '$lib/icons/Play.svelte';
 	import Pencil from '$lib/icons/Pencil.svelte';
+	import IconPlus from '$lib/icons/IconPlus.svelte';
+	import Header from '$lib/components/Header.svelte';
 
 	export let data;
 
 	let practiceRoutineToDelete: PracticeRoutine | undefined;
 
-	function showCreateExerciseModal() {
+	function showCreateRoutineModal() {
 		(<HTMLDialogElement>document.getElementById('practice_routine_create'))?.showModal();
 	}
 
@@ -42,36 +44,40 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Routines</title>
+</svelte:head>
 <main>
-	<div class="flex">
-		<div class="grow">
-			<h1 class="text-2xl">Routines</h1>
-		</div>
-		<div>
-			<button class="btn btn-primary" on:click={showCreateExerciseModal}>New</button>
-		</div>
-	</div>
+	<Header>
+		<ul slot="breadcrumbs">
+			<li>Routines</li>
+		</ul>
+		<svelte:fragment slot="title">Routines</svelte:fragment>
+		<svelte:fragment slot="actions">
+			<button class="btn btn-primary" on:click={showCreateRoutineModal}><IconPlus />Create Routine</button>
+		</svelte:fragment>
+	</Header>
 	<table class="table">
 		<thead>
 			<tr>
 				<td>Name</td>
-				<td class="w-60">Actions</td>
+				<td class="w-48">Actions</td>
 			</tr>
 		</thead>
 		<tbody>
 			{#each data.collection as practiceRoutine (practiceRoutine.id)}
 				<tr>
-					<td>{practiceRoutine.name}</td>
+					<td><span class="text-lg">{practiceRoutine.name}</span></td>
 					<td>
 						<div class="flex gap-2">
-							<a class="btn btn-circle" href="routines/{practiceRoutine.id}/practice">
+							<a class="btn btn-circle btn-outline btn-primary" href="routines/{practiceRoutine.id}/practice">
 								<Play size="size-6" />
 							</a>
-							<a class="btn btn-circle" href="routines/{practiceRoutine.id}">
+							<a class="btn btn-circle btn-outline btn-neutral" href="routines/{practiceRoutine.id}">
 								<Pencil />
 							</a>
 							<button
-								class="btn btn-circle"
+								class="btn btn-circle btn-outline btn-error"
 								on:click={showDeletePracticeRoutineDialog(practiceRoutine)}
 							>
 								<Trash />

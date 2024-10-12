@@ -1,8 +1,11 @@
 <script lang="ts">
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte';
+	import Header from '$lib/components/Header.svelte';
 	import Form from '$lib/components/form/Form.svelte';
 	import SelectControl from '$lib/components/form/controls/SelectControl.svelte';
 	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
+	import IconPlus from '$lib/icons/IconPlus.svelte';
+	import Play from '$lib/icons/Play.svelte';
 	import Trash from '$lib/icons/Trash.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
 	import { formatDuration } from '$lib/time';
@@ -71,31 +74,41 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Edit {data.practiceRoutine.name}</title>
+</svelte:head>
 <main>
-	<div class="flex justify-between">
-		<div>
-			<h1 class="text-2xl">{data.practiceRoutine.name}</h1>
-		</div>
-		<div>
-			<button class="btn btn-primary" on:click={showAddExercise}>Add Exercise</button>
-		</div>
-	</div>
+	<Header>
+		<ul slot="breadcrumbs">
+			<li><a href="/routines">Routines</a></li>
+			<li>{data.practiceRoutine.name}</li>
+		</ul>
+		<svelte:fragment slot="title">{data.practiceRoutine.name}</svelte:fragment>
+		<svelte:fragment slot="actions">
+			<button class="btn" on:click={showAddExercise}><IconPlus />Add Exercise</button>
+			<a
+				class="btn btn-primary"
+				href="{data.practiceRoutine.id}/practice"
+				aria-label="Practice {data.practiceRoutine.name}"><Play size="size-6" /></a
+			>
+		</svelte:fragment>
+	</Header>
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Exercise</th>
-				<th>Duration</th>
-				<th>Actions</th>
+				<th class="w-48">Duration</th>
+				<th class="w-48">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each data.exercises as [practiceRoutineExercise, exercise]}
 				<tr>
-					<td>{exercise?.title}</td>
-					<td>{formatDuration(practiceRoutineExercise.duration)}</td>
+					<td><span class="text-lg">{exercise?.title}</span></td>
+					<td><span class="text-lg">{formatDuration(practiceRoutineExercise.duration)}</span></td>
 					<td>
 						<button
-							class="btn btn-circle"
+							class="btn btn-circle btn-outline btn-error"
 							on:click={showRemoveExerciseDialog(practiceRoutineExercise.id)}
 						>
 							<Trash />

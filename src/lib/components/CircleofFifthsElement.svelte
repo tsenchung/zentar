@@ -11,16 +11,26 @@
 	export let onTonicSelected: (tone: ToneClass) => void;
 	export let tabindex: number;
 	export let active: boolean;
+	let label: string = renderTone(tone)
 </script>
 
-<AnnularSector {a1} {a2} {r1} {r2} {active} onclick={() => onTonicSelected(tone)} {tabindex} />
+<AnnularSector {a1} {a2} {r1} {r2} {active} ariaLabel={label} onclick={() => onTonicSelected(tone)} {tabindex} />
 <text
 	style="pointer-events: none"
 	dominant-baseline="central"
-	class="text-xl"
+	class="circle-of-fifths-label text-xl {active ? 'active' : ''}"
 	text-anchor="middle"
 	x={((r1 + r2) / 2) * Math.cos((a2 + a1) / 2)}
 	y={((r1 + r2) / 2) * Math.sin((a2 + a1) / 2)}
-	fill="black"
-	color="black">{renderTone(tone)}</text
 >
+	{label}
+</text>
+
+<style>
+	text.circle-of-fifths-label.active {
+		fill: oklch(var(--pc));
+	}
+	text.circle-of-fifths-label {
+		fill: oklch(var(--bc));
+	}
+</style>

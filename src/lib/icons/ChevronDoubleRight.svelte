@@ -7,5 +7,9 @@
 	class="size-6"
 	aria-hidden="true"
 >
-	<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+	<path
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"
+	/>
 </svg>

@@ -7,12 +7,14 @@
 	export let active: boolean;
 	export let onclick: () => void;
 	export let tabindex: number;
+	export let ariaLabel: string;
 </script>
 
 <path
 	role="button"
 	{tabindex}
-	class="arc {active ? 'active' : ''}"
+	class="btn arc {active ? 'btn-primary' : 'inactive'}"
+	aria-label={ariaLabel}
 	on:click={onclick}
 	on:keypress={(ev) => {
 		if (ev.key == 'Enter') {
@@ -29,7 +31,11 @@
 />
 
 <style>
-	.active {
-		fill: #99dbff;
+	.inactive:hover {
+		fill: color-mix( in oklab, oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity, 1)) 90%, black );
+	}
+
+	.arc {
+		fill: oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity));
 	}
 </style>

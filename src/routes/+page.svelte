@@ -85,8 +85,18 @@
 	setDefaultHighlightMode();
 </script>
 
+<svelte:head>
+	<title>Visualize</title>
+</svelte:head>
 <main>
-	<h1 class="text-2xl">Visualize</h1>
+	<div class="breadcrumbs text-sm">
+		<ul>
+			<li>Visualize</li>
+		</ul>
+	</div>
+	<div class="flex items-center justify-between h-8 mb-4">
+		<h1 class="text-xl">Visualize</h1>
+	</div>
 	<section class="overflow-scroll">
 		<GuitarVisualization
 			strings={$fretboardSettings.strings}

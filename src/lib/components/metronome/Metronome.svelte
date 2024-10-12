@@ -7,8 +7,6 @@
 	import TripletNote from '$lib/icons/TripletNote.svelte';
 	import EightNote from '$lib/icons/EightNote.svelte';
 	import QuarterNote from '$lib/icons/QuarterNote.svelte';
-	import Play from '$lib/icons/Play.svelte';
-	import Pause from '$lib/icons/Pause.svelte';
 
 	let audioCtx: AudioContext | undefined;
 	let playing = false;
@@ -19,10 +17,10 @@
 	let buffer2: AudioBuffer | undefined;
 	let scheduler: number | undefined;
 	let nextAvailableSlot: number;
-	let bpm = 60;
+	let bpm = 100;
 
 	let scheduled: AudioNode[] = [];
-	let subdivisions: 1 | 2 | 3 | 4 = 4;
+	let subdivisions: 1 | 2 | 3 | 4 = 1;
 
 	async function fetchDowneatClick() {
 		const response = await fetch(metronomeClickDownbeat);
@@ -66,11 +64,11 @@
 		playing = true;
 		nextAvailableSlot = audioCtx!.currentTime + 0.01;
 		schedule();
-		scheduler = setInterval(schedule, 0.015);
+		scheduler = setInterval(schedule, 100);
 	}
 
 	function schedule() {
-		if (nextAvailableSlot - audioCtx!.currentTime > 1) {
+		if (nextAvailableSlot - audioCtx!.currentTime > 0.5) {
 			return;
 		}
 		let start: number;
@@ -88,41 +86,46 @@
 	});
 </script>
 
-<div class="flex justify-between items-center mb-10">
+<div class="flex text-2xl gap-4 mb-4">
+	Metronome
+<label class="swap text-primary font-bold">
+	<input type="checkbox" on:click={togglePlay} autocomplete="off" />
+	<div class="swap-on">
+		ON
+	</div>
+	<div class="swap-off">
+		OFF
+	</div>
+</label>
+</div>
+<div class="flex justify-between items-center mb-4">
 	<div class="flex items-center gap-4">
-		<label class="swap">
-			<input type="checkbox" on:click={togglePlay} autocomplete="off" />
-			<div class="btn btn-circle size-24 swap-on">
-				<Pause />
-			</div>
-			<div class="btn btn-circle size-24 swap-off">
-				<Play />
-			</div>
-		</label>
-		<span class="text-5xl">{bpm} BPM</span>
+		<div class="flex items-end gap-1">
+			<span class="text-3xl font-mono">{bpm}</span><span class="text-2xl">BPM</span>
+		</div>
 	</div>
 	<div class="flex gap-4">
 		<div class="join">
 			<button
-				class="btn join-item {subdivisions == 1 ? 'btn-primary' : ''}"
+				class="btn btn-sm join-item {subdivisions == 1 ? 'btn-primary' : ''}"
 				on:click={() => {
 					subdivisions = 1;
 				}}><QuarterNote /></button
 			>
 			<button
-				class="btn join-item {subdivisions == 2 ? 'btn-primary' : ''}"
+				class="btn btn-sm join-item {subdivisions == 2 ? 'btn-primary' : ''}"
 				on:click={() => {
 					subdivisions = 2;
 				}}><EightNote /></button
 			>
 			<button
-				class="btn join-item {subdivisions == 3 ? 'btn-primary' : ''}"
+				class="btn btn-sm join-item {subdivisions == 3 ? 'btn-primary' : ''}"
 				on:click={() => {
 					subdivisions = 3;
 				}}><TripletNote /></button
 			>
 			<button
-				class="btn join-item {subdivisions == 4 ? 'btn-primary' : ''}"
+				class="btn btn-sm join-item {subdivisions == 4 ? 'btn-primary' : ''}"
 				on:click={() => {
 					subdivisions = 4;
 				}}><SixteenthNote /></button
@@ -131,5 +134,5 @@
 	</div>
 </div>
 <div>
-	<input type="range" min="30" max="120" class="range range-primary" bind:value={bpm} />
+	<input type="range" min="30" max="200" class="range range-primary" bind:value={bpm} />
 </div>

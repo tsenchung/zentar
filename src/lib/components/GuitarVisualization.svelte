@@ -50,6 +50,7 @@
 <svg
 	width={options.head.width + options.frets * options.fret.spacing + 40}
 	height={30 + options.marginTop + strings.length * options.stringSpacing}
+	class="bg-base-100"
 >
 	<g class="layer-base">
 		<Nut parameters={options} stringCount={strings.length} />

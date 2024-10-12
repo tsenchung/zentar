@@ -8,6 +8,8 @@
 	import Form from '$lib/components/form/Form.svelte';
 	import TextInputControl from '$lib/components/form/controls/TextInputControl.svelte';
 	import { z } from 'zod';
+	import IconPlus from '$lib/icons/IconPlus.svelte';
+	import Header from '$lib/components/Header.svelte';
 
 	export let data;
 
@@ -48,43 +50,49 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Exercises</title>
+</svelte:head>
 <main>
-	<div class="overflow-x-auto">
-		<div class="flex">
-			<div class="grow">
-				<h1 class="text-2xl">Exercises</h1>
-			</div>
-			<div>
-				<button class="btn btn-primary" on:click={showCreateExerciseModal}>New</button>
-			</div>
-		</div>
-		<p>Exercises created can be added to your practice routines.</p>
-		<table class="table">
-			<thead>
+	<Header>
+		<ul slot="breadcrumbs">
+			<li>Exercises</li>
+		</ul>
+		<svelte:fragment slot="title">Exercises</svelte:fragment>
+		<svelte:fragment slot="actions">
+			<button class="btn btn-primary" on:click={showCreateExerciseModal}
+				><IconPlus /> Exercise</button
+			>
+		</svelte:fragment>
+	</Header>
+	<table class="table">
+		<thead>
+			<tr>
+				<td> Name </td>
+				<td class="w-48"> Actions </td>
+			</tr>
+		</thead>
+		<tbody>
+			{#each data.collection as exercise (exercise.id)}
 				<tr>
-					<td> Name </td>
-					<td> Actions </td>
+					<td><span class="text-lg">{exercise.title}</span></td>
+					<td>
+						<div class="flex gap-2">
+							<a class="btn btn-circle btn-outline" href="exercises/{exercise.id}">
+								<Eye />
+							</a>
+							<button
+								class="btn btn-circle btn-outline btn-error"
+								on:click={showDeleteExerciseDialog(exercise)}
+							>
+								<Trash />
+							</button>
+						</div>
+					</td>
 				</tr>
-			</thead>
-			<tbody>
-				{#each data.collection as exercise (exercise.id)}
-					<tr>
-						<td>{exercise.title}</td>
-						<td>
-							<div>
-								<a class="btn btn-circle" href="exercises/{exercise.id}">
-									<Eye />
-								</a>
-								<button class="btn btn-circle" on:click={showDeleteExerciseDialog(exercise)}>
-									<Trash />
-								</button>
-							</div>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+			{/each}
+		</tbody>
+	</table>
 
 	<dialog id="exercise_create" class="modal">
 		<div class="modal-box w-10/12 max-w-full">

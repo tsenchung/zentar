@@ -1,88 +1,122 @@
 <script lang="ts">
-	import { fretboardSettings } from '$lib/settings';
-	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
-	import { highlighter } from '$lib/theory/fretboard';
-	import { majorScale } from '$lib/theory/majorScale';
-	import { ToneClass } from '$lib/theory/tones';
 	import Metronome from '$lib/components/metronome/Metronome.svelte';
+	import { onDestroy } from 'svelte';
+	import ExerciseTimeControls from './ExerciseTimeControls.svelte';
+	import Header from '$lib/components/Header.svelte';
 
-	let duration = 65000;
-	let timerEnd: number;
-	let timer = 0;
-	let currentTimeout: number;
-	const tick = () => {
-		timer = timerEnd - new Date().valueOf();
-		if (timer > 0) {
-			currentTimeout = setTimeout(tick, 100);
+	export let data;
+	let autoplay: boolean = false;
+	let currentIndex = 0;
+	$: currentTuple = data.exercises.length > 0 ? data.exercises[currentIndex] : undefined;
+	$: currentRoutineExercise = currentTuple ? currentTuple[0] : undefined;
+	$: currentExercise = currentTuple ? currentTuple[1] : undefined;
+
+	function nextExercise() {
+		if (currentIndex + 1 < data.exercises.length) {
+			currentIndex = currentIndex + 1;
+			scrollToCurrentExercise();
 		}
-	};
+	}
 
-	const start = () => {
-		timerEnd = new Date().valueOf() + duration;
-		timer = duration;
-		tick();
-	};
+	function previousExercise() {
+		if (currentIndex > 0) {
+			currentIndex = currentIndex - 1;
+			scrollToCurrentExercise();
+		}
+	}
 
-	const pause = () => {
-		clearTimeout(currentTimeout);
-		duration = timerEnd - new Date().valueOf();
-	};
+	function scrollToCurrentExercise() {
+		const steps = document.querySelector('.exercises');
+		const step = document.querySelector('.exercises li:nth-child(' + (currentIndex + 1) + ')');
+		if (steps && step) {
+			const stepsRect = steps.getBoundingClientRect();
+			const stepRect = step.getBoundingClientRect();
+			const scrollTo = stepRect.top - stepsRect.top + steps.scrollTop;
+			steps.scroll({ top: scrollTo, behavior: 'smooth' });
+		}
+	}
 
-	const resume = () => {
-		start();
-	};
-
-	$: seconds = Math.trunc(timer / 1000) % 60;
-	$: minutes = Math.trunc(timer / 60000) % 60;
-	start();
+	onDestroy(() => {
+		data.client.close();
+	});
 </script>
 
-<main>
-	<h1>Practice</h1>
-	<div class="g grid">
-		<div class="timer">
-			<div
-				class="radial-progress"
-				style="--value:{(100 * (duration - timer)) / duration}; --size:12rem; --thickness: 2px;"
-				role="progressbar"
-			>
-				<span class="countdown font-mono text-2xl">
-					<span style="--value:{minutes};"></span>
-					:
-					<span style="--value:{seconds};"></span>
-				</span>
+<svelte:head>
+	<title>Practice - {data.practiceRoutine.name}</title>
+</svelte:head>
+{#if data.exercises.length > 0}
+	<main>
+		<Header>
+			<ul slot="breadcrumbs">
+				<li><a href="/routines">Routines</a></li>
+				<li><a href="/routines/{data.practiceRoutine.id}">{data.practiceRoutine.name}</a></li>
+				<li>Practice</li>
+			</ul>
+			<svelte:fragment slot="title">{data.practiceRoutine.name}</svelte:fragment>
+		</Header>
+		<section class="exercise bg-slate-950 text-slate-200">
+			<h2 class="sr-only">{currentExercise?.title}</h2>
+			<div class="flex justify-center items-center p-4 min-h-[50lvh]">
+				<section class="overflow-scroll">
+					<pre class="inline text-lg">
+{currentExercise?.aid.text}
+				</pre>
+				</section>
+			</div>
+			{#if currentRoutineExercise}
+				{#key currentRoutineExercise.id}
+					<ExerciseTimeControls
+						duration={currentRoutineExercise.duration * 1000}
+						{autoplay}
+						onAutoplayToggled={(ap) => {
+							autoplay = ap;
+						}}
+						onPrevious={previousExercise}
+						onNext={nextExercise}
+					/>
+				{/key}
+			{/if}
+		</section>
+
+		<div class="flex flex-row mt-4">
+			<div class="grow">
+				<div class="flex justify-start items-center gap-4 h-5">
+					<span class="text-2xl" aria-hidden="true">{currentExercise?.title}</span>
+				</div>
+				<div class="metronome w-5/12 h-56 mt-8"><Metronome /></div>
+			</div>
+			<div>
+				<h3 class="text-2xl">Exercises</h3>
+				<ul class="exercises steps steps-vertical w-96 h-56 overflow-y-auto">
+					{#each data.exercises as exercise, i}
+						<li class="step {i <= currentIndex ? 'step-primary' : ''}">
+							<button
+								on:click={() => {
+									currentIndex = i;
+								}}
+							>
+								{exercise[1]?.title}
+							</button>
+						</li>
+					{/each}
+				</ul>
 			</div>
 		</div>
-		<div class="metronome w-10/12 h-56"><Metronome /></div>
-		<div class="exercise">
-			<section class="overflow-scroll">
-				<GuitarVisualization
-					strings={$fretboardSettings.strings}
-					highlighters={[highlighter(majorScale)(ToneClass.C)]}
-					options={$fretboardSettings}
-				/>
-			</section>
-		</div>
-	</div>
-</main>
-
-<style>
-	.g {
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			'p p'
-			't m';
-	}
-	.timer {
-		grid-area: t;
-		align-self: center;
-		justify-self: center;
-	}
-	.metronome {
-		grid-area: m;
-	}
-	.exercise {
-		grid-area: p;
-		justify-self: center;
-	}
-</style>
+	</main>
+{:else}
+	<main>
+		<Header>
+			<ul slot="breadcrumbs">
+				<li><a href="/routines">Routines</a></li>
+				<li><a href="/routines/{data.practiceRoutine.id}">{data.practiceRoutine.name}</a></li>
+				<li>Practice</li>
+			</ul>
+			<svelte:fragment slot="title">{data.practiceRoutine.name}</svelte:fragment>
+		</Header>
+		<p>
+			This routine does not have any exercises yet.
+			<a class="link link-primary" href="/routines/{data.practiceRoutine.id}"> Click&nbsp;here </a>
+			to add exercises to the routine.
+		</p>
+	</main>
+{/if}
