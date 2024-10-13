@@ -3,6 +3,8 @@
 	import { onDestroy } from 'svelte';
 	import ExerciseTimeControls from './ExerciseTimeControls.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
+	import { fretboardSettings } from '$lib/settings';
 
 	export let data;
 	let autoplay: boolean = false;
@@ -58,9 +60,13 @@
 			<h2 class="sr-only">{currentExercise?.title}</h2>
 			<div class="flex justify-center items-center p-4 min-h-[50lvh]">
 				<section class="overflow-scroll">
-					<pre class="inline text-lg">
+					{#if currentExercise?.aid.type == "AidText"}
+						<pre class="inline text-lg">
 {currentExercise?.aid.text}
-				</pre>
+						</pre>
+					{:else if currentExercise?.aid.type == "AidVisualizer"}
+						<GuitarVisualization options={$fretboardSettings} highlightMode={currentExercise.aid.highlightMode}/>
+					{/if}
 				</section>
 			</div>
 			{#if currentRoutineExercise}
@@ -83,7 +89,7 @@
 				<div class="flex justify-start items-center gap-4 h-5">
 					<span class="text-2xl" aria-hidden="true">{currentExercise?.title}</span>
 				</div>
-				<div class="metronome w-5/12 h-56 mt-8"><Metronome /></div>
+				<div class="metronome w-96 h-56 mt-8"><Metronome /></div>
 			</div>
 			<div>
 				<h3 class="text-2xl">Exercises</h3>

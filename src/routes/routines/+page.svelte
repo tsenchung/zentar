@@ -57,7 +57,7 @@
 			<button class="btn btn-primary" on:click={showCreateRoutineModal}><IconPlus />Create Routine</button>
 		</svelte:fragment>
 	</Header>
-	<table class="table">
+	<table class="table table-zebra">
 		<thead>
 			<tr>
 				<td>Name</td>

@@ -1,4 +1,4 @@
-<header class="flex justify-between items-end mb-4">
+<header class="flex flex-wrap justify-between items-end mb-4">
 	<div>
 		<nav class="breadcrumbs text-sm">
 			<slot name="breadcrumbs" />

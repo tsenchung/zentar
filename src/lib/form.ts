@@ -55,7 +55,7 @@ export function FormFactory<
 			};
 			formStateStore.set(formState);
 
-			const validateAndSetDirty = (input: HTMLInputElement | HTMLSelectElement) => () => {
+			const validateAndSetDirty = (input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => () => {
 				const dirty: { [key: string]: boolean } = { ...formState.dirty };
 				dirty[input.name] = true;
 				formState = {
@@ -66,12 +66,29 @@ export function FormFactory<
 				formStateStore.set(formState);
 			};
 
-			form.querySelectorAll('input').forEach((input) => {
-				input.onblur = validateAndSetDirty(input);
-			});
-			form.querySelectorAll('select').forEach((select) => {
-				select.onchange = validateAndSetDirty(select);
-			});
+			form.addEventListener('blur', (ev) => {
+				console.log("onblur")
+				if (ev.target instanceof HTMLInputElement || ev.target instanceof HTMLTextAreaElement) {
+					validateAndSetDirty(ev.target)();
+				}
+			}, true);
+			form.onchange = (ev) => {
+				if (ev.target instanceof HTMLSelectElement) {
+					validateAndSetDirty(ev.target)();
+				}
+			}
+
+			form.onclick = (ev) => {
+				if (
+					ev.target &&
+					ev.target instanceof HTMLInputElement &&
+					ev.target.type == 'radio' &&
+					ev.target &&
+					ev.target
+				) {
+					validateAndSetDirty(ev.target)();
+				}
+			};
 			form.onsubmit = (ev: SubmitEvent) => {
 				formState = {
 					...formState,

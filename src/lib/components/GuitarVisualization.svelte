@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DisplayParameters } from '$lib';
-	import { buildFretboard, type Note } from '$lib/theory/fretboard';
+	import { buildFretboard, buildHighlighter, highlighter, type HighlightMode, type Note } from '$lib/theory/fretboard';
 	import { ToneClass } from '$lib/theory/tones';
 	import Fret from './Fret.svelte';
 	import Fretboard from './Fretboard.svelte';
@@ -8,9 +8,13 @@
 	import NoteComponent from './NoteComponent.svelte';
 	import Nut from './Nut.svelte';
 
-	export let strings: ReadonlyArray<ToneClass>;
-	export let highlighters: ReadonlyArray<(note: Note) => Note>;
+	export let highlightMode: HighlightMode;
+	let highlighters: ReadonlyArray<(note: Note) => Note>;
 	export let options: DisplayParameters;
+
+	$: highlighters = [buildHighlighter(highlightMode)];
+
+
 
 	function marker(fret: number, type: 'single' | 'double') {
 		return { fret, type };
@@ -31,7 +35,7 @@
 		'#ee99ff'
 	];
 
-	$: fretboard = buildFretboard(strings, options.frets, highlighters);
+	$: fretboard = buildFretboard(options.strings, options.frets, highlighters);
 
 	$: fretMarkers = [
 		marker(3, 'single'),
@@ -49,16 +53,16 @@
 
 <svg
 	width={options.head.width + options.frets * options.fret.spacing + 40}
-	height={30 + options.marginTop + strings.length * options.stringSpacing}
+	height={30 + options.marginTop + options.strings.length * options.stringSpacing}
 	class="bg-base-100"
 >
 	<g class="layer-base">
-		<Nut parameters={options} stringCount={strings.length} />
+		<Nut parameters={options} stringCount={options.strings.length} />
 		<Fretboard parameters={options}>
 			{#each Array(options.frets) as _, i}
-				<Fret parameters={options} number={i} stringCount={strings.length} />
+				<Fret parameters={options} number={i} stringCount={options.strings.length} />
 			{/each}
-			{#each strings as _, j}
+			{#each options.strings as _, j}
 				<line
 					x1={0}
 					y1={j * options.stringSpacing}
@@ -69,7 +73,7 @@
 				/>
 			{/each}
 			<g
-				transform="translate(0,{(strings.length - 1) * options.stringSpacing +
+				transform="translate(0,{(options.strings.length - 1) * options.stringSpacing +
 					options.note.radius +
 					2.5 +
 					15})"

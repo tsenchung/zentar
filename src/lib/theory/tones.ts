@@ -13,7 +13,7 @@ export enum ToneClass {
 	Af
 }
 
-const orderedTones = [
+export const orderedTones = [
 	ToneClass.A,
 	ToneClass.Bf,
 	ToneClass.B,
