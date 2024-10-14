@@ -10,9 +10,13 @@
 	import { z } from 'zod';
 	import IconPlus from '$lib/icons/IconPlus.svelte';
 	import Header from '$lib/components/Header.svelte';
-	import { orderedTones, renderTone } from '$lib/theory/tones';
+	import { orderedTones, renderTone, ToneClass } from '$lib/theory/tones';
 	import { majorScaleHarmonizationTriads } from '$lib/theory/triad';
 	import { majorScaleHarmonizationSevenths } from '$lib/theory/seventhChords';
+	import HighlightPicker from '$lib/components/HighlightPicker.svelte';
+	import type { HighlightMode } from '$lib/theory/fretboard';
+	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
+	import { fretboardSettings } from '$lib/settings.js';
 
 	export let data;
 
@@ -48,9 +52,20 @@
 		};
 	}
 
+	function setHighlightMode(picked: HighlightMode) {
+		highlightMode = picked
+	}
+
 	let aidType: string = 'AidText';
-	let highlightType: string = 'Scale';
-	let chordType: string = 'Triad';
+
+	let defaultHighlightMode: HighlightMode = {
+		type: 'Scale',
+		scale: 'Major',
+		tonic: ToneClass.C
+	};
+
+	let highlightMode: HighlightMode;
+
 	onDestroy(() => {
 		data.client.close();
 	});
@@ -145,117 +160,24 @@
 						<textarea class="textarea textarea-bordered font-mono w-full" name="aid.text" />
 					</label>
 				{:else if aidType == 'AidVisualizer'}
-					<fieldset class="form-control">
-						<div class="label">
-							<legend class="label-text font-semibold">Highlight Type</legend>
-						</div>
-						<div class="join">
-							<input
-								class="join-item btn"
-								type="radio"
-								name="aid.highlightMode.type"
-								value="Scale"
-								aria-label="Scale"
-								bind:group={highlightType}
-							/>
-							<input
-								class="join-item btn"
-								type="radio"
-								name="aid.highlightMode.type"
-								value="Chord"
-								aria-label="Chord"
-								bind:group={highlightType}
-							/>
-						</div>
-					</fieldset>
-					{#if highlightType == 'Scale'}
-						<fieldset class="form-control">
-							<div class="label">
-								<legend class="label-text font-semibold">Scale</legend>
-							</div>
-							<div class="join">
-								<input
-									class="join-item btn"
-									type="radio"
-									name="aid.highlightMode.scale"
-									value="Major"
-									aria-label="Major"
-									checked
-								/>
-								<input
-									class="join-item btn"
-									type="radio"
-									name="aid.highlightMode.scale"
-									value="Minor"
-									aria-label="Minor"
-								/>
-							</div>
-						</fieldset>
-					{:else}
-						<input type="hidden" name="aid.highlightMode.scale" value="Major" />
+					<HighlightPicker onHighlightPicked={setHighlightMode}/>
+					<input type="hidden" name="aid.highlightMode.type" value={highlightMode.type} />
+					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
+					<input type="hidden" name="aid.highlightMode.tonic" value={highlightMode.tonic} />
+					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
+					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
+					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
+					{#if highlightMode.type == 'Chord'}
+						<input type="hidden" name="aid.highlightMode.chordType" value={highlightMode.chordType} />
+						<input type="hidden" name="aid.highlightMode.chordNumber" value={highlightMode.chordNumber} />
+						<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					{/if}
-					<fieldset class="form-control">
-						<div class="label">
-							<legend class="label-text font-semibold">Tonic</legend>
-						</div>
-						<div class="join">
-							{#each orderedTones as tone, i}
-								<input
-									class="join-item btn"
-									type="radio"
-									name="aid.highlightMode.tonic"
-									value={tone}
-									aria-label={renderTone(tone)}
-									checked={i == 0}
-								/>
-							{/each}
-						</div>
-					</fieldset>
-					{#if highlightType == 'Chord'}
-						<fieldset class="form-control">
-							<div class="label">
-								<legend class="label-text font-semibold">Chord Type</legend>
-							</div>
-							<div class="join">
-								<input
-									class="join-item btn"
-									type="radio"
-									name="aid.highlightMode.chordType"
-									value="Triad"
-									aria-label={'Triad'}
-									checked
-									bind:group={chordType}
-								/>
-								<input
-									class="join-item btn"
-									type="radio"
-									name="aid.highlightMode.chordType"
-									value="Seventh"
-									aria-label={'Seventh'}
-									bind:group={chordType}
-								/>
-							</div>
-						</fieldset>
-						<fieldset class="form-control">
-							<div class="label">
-								<legend class="label-text font-semibold">Chord Number</legend>
-							</div>
-							<div class="join">
-								{#key chordType}
-									{#each chordType == 'Triad' ? majorScaleHarmonizationTriads : majorScaleHarmonizationSevenths as chord, i}
-										<input
-											class="join-item btn"
-											type="radio"
-											name="aid.highlightMode.chordNumber"
-											value={i}
-											aria-label={chord.name}
-											checked={i == 0}
-										/>
-									{/each}
-								{/key}
-							</div>
-						</fieldset>
-					{/if}
+					<section class="overflow-scroll">
+						<GuitarVisualization
+							highlightMode={highlightMode || defaultHighlightMode}
+							options={$fretboardSettings}
+						/>
+					</section>
 				{/if}
 				<div>
 					<button class="btn btn-primary">Create</button>

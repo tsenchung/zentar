@@ -1,7 +1,40 @@
+<script lang="ts" context="module">
+	const colors: string[] = [];
+	{
+		const start = 250;
+		const end = 360;
+		const totalDistance = (start <= end) ? end - start : (360 - start) + end;
+		const step = totalDistance / 11;
+		console.log(totalDistance);
+		let hue;
+		for (let i = 0; i <= 11; i++) {
+			hue = (start + i * step) % 360;
+			colors.push(`oklch(77% 0.12 ${hue})`);
+		}
+	};
+
+	function marker(fret: number, type: 'single' | 'double') {
+		return { fret, type };
+	}
+
+	const allFretMarkers = [
+		marker(3, 'single'),
+		marker(5, 'single'),
+		marker(7, 'single'),
+		marker(9, 'single'),
+		marker(12, 'double'),
+		marker(15, 'single'),
+		marker(17, 'single'),
+		marker(19, 'single'),
+		marker(21, 'single'),
+		marker(24, 'double')
+	];
+
+</script>
+
 <script lang="ts">
 	import type { DisplayParameters } from '$lib';
-	import { buildFretboard, buildHighlighter, highlighter, type HighlightMode, type Note } from '$lib/theory/fretboard';
-	import { ToneClass } from '$lib/theory/tones';
+	import { buildFretboard, buildHighlighter, type HighlightMode, type Note } from '$lib/theory/fretboard';
 	import Fret from './Fret.svelte';
 	import Fretboard from './Fretboard.svelte';
 	import FretMarker from './FretMarker.svelte';
@@ -13,42 +46,8 @@
 	export let options: DisplayParameters;
 
 	$: highlighters = [buildHighlighter(highlightMode)];
-
-
-
-	function marker(fret: number, type: 'single' | 'double') {
-		return { fret, type };
-	}
-
-	const colors = [
-		'#99dbff',
-		'#92d2ff',
-		'#91c9ff',
-		'#95beff',
-		'#9db3ff',
-		'#a7adff',
-		'#b3a7ff',
-		'#c0a0ff',
-		'#cb9fff',
-		'#d79dff',
-		'#e29bff',
-		'#ee99ff'
-	];
-
 	$: fretboard = buildFretboard(options.strings, options.frets, highlighters);
-
-	$: fretMarkers = [
-		marker(3, 'single'),
-		marker(5, 'single'),
-		marker(7, 'single'),
-		marker(9, 'single'),
-		marker(12, 'double'),
-		marker(15, 'single'),
-		marker(17, 'single'),
-		marker(19, 'single'),
-		marker(21, 'single'),
-		marker(24, 'double')
-	].filter((marker) => marker.fret <= options.frets);
+	$: fretMarkers = allFretMarkers.filter((marker) => marker.fret <= options.frets);
 </script>
 
 <svg
