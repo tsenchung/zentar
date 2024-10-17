@@ -6,9 +6,9 @@
 	let bufferDoneNotification: AudioBuffer | undefined;
 	if (browser) {
 		audioCtx = new AudioContext();
+		audioCtx.suspend();
 		const response = await fetch(NotificationSoundDone);
 		bufferDoneNotification = await audioCtx!.decodeAudioData(await response.arrayBuffer());
-		audioCtx.suspend();
 	}
 </script>
 
@@ -19,7 +19,7 @@
 	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
 	import { fretboardSettings } from '$lib/settings';
 	import { createTimer, type ReadableTimer, type Timer } from '$lib/timer';
-	import type { Readable, Unsubscriber } from 'svelte/store';
+	import type { Unsubscriber } from 'svelte/store';
 	import { onDestroy } from 'svelte';
 
 	export let data;
@@ -129,7 +129,7 @@
 				<div class="toast toast-top">
 					<div class="alert alert-info">
 						<span
-							>Next exercise starting in {Math.trunc(nextExerciseTimerState.remainingTime / 1000)} seconds</span
+							>Next exercise starting in {Math.ceil(nextExerciseTimerState.remainingTime / 1000)} seconds</span
 						>
 					</div>
 				</div>
