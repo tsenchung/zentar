@@ -5,91 +5,57 @@
 	import Pause from '$lib/icons/Pause.svelte';
 	import Play from '$lib/icons/Play.svelte';
 	import { formatDuration } from '$lib/time';
-	import { onDestroy } from 'svelte';
+	import { createTimer } from '$lib/timer';
 
 	export let onPrevious: () => void;
+	export let onComplete: (autoplay: boolean) => Promise<void>;
 	export let onNext: () => void;
 	export let onAutoplayToggled: (autoplay: boolean) => void;
 
 	export let duration = 65000;
 
 	export let autoplay: boolean;
-	let timerEnd: number;
-	let remainingTime = duration;
-	let timer = remainingTime;
-	let currentTimeout: number | undefined;
-	let state: 'playing' | 'paused' | 'stopped' = 'paused';
 
 	const toggleAutoplay = () => {
 		autoplay = !autoplay;
 		onAutoplayToggled(autoplay);
 	};
 
-	const tick = () => {
-		timer = timerEnd - new Date().valueOf();
-		if (timer > 0) {
-			currentTimeout = setTimeout(tick, 50);
-		} else {
-			if (autoplay) {
-				onNext();
-			}
-			currentTimeout = undefined;
-			state = 'stopped';
-		}
-	};
-
-	const start = () => {
-		timerEnd = new Date().valueOf() + remainingTime;
-		timer = remainingTime;
-		state = 'playing';
-		tick();
-	};
-
-	const pause = () => {
-		clearTimeout(currentTimeout);
-		remainingTime = timerEnd - new Date().valueOf();
-		state = 'paused';
-	};
-
-	const resume = () => {
-		start();
-	};
-
-	if (autoplay) {
-		start();
+	async function onTimerDone() {
+		onComplete(autoplay);
 	}
 
-	onDestroy(() => {
-		if (currentTimeout) {
-			clearTimeout(currentTimeout);
-		}
-	});
+	const timer = createTimer(duration, onTimerDone);
+
+	if (autoplay) {
+		timer.start();
+	}
 </script>
 
 <progress
 	class="progress progress-secondary w-full rounded-none progress-rounded-none"
-	value={(100 * (duration - timer)) / duration}
+	value={(100 * ($timer.duration - $timer.remainingTime)) / duration}
 	max="100"
 ></progress>
 <div class="controls flex justify-between gap-4 px-4 text-slate-300">
 	<div>
-		<button class="btn btn-ghost btn-sm" aria-label="Pause" on:click={onPrevious}>
+		<button class="btn btn-ghost btn-sm" aria-label="Previous Exercise" on:click={onPrevious}>
 			<ChevronDoubleLeft />
 		</button>
-		{#if state === 'playing'}
-			<button class="btn btn-ghost btn-sm" aria-label="Pause" on:click={pause}>
+		{#if $timer.state === 'playing'}
+			<button class="btn btn-ghost btn-sm" aria-label="Pause" on:click={timer.stop}>
 				<Pause size="size-6" />
 			</button>
-		{:else if state === 'paused'}
-			<button class="btn btn-ghost btn-sm" aria-label="Play" on:click={resume}>
+		{:else if $timer.state === 'stopped' && $timer.remainingTime != 0}
+			<button class="btn btn-ghost btn-sm" aria-label="Play" on:click={timer.start}>
 				<Play size="size-6" />
 			</button>
 		{:else}
-			<button class="btn btn-ghost btn-sm" aria-label="Restart" on:click={resume}>
+			<button class="btn btn-ghost btn-sm" aria-label="Restart" on:click={timer.start}>
 				<ArrowPath />
 			</button>
 		{/if}
-		<button class="btn btn-ghost btn-sm" aria-label="Pause" on:click={onNext}>
+		<button class="btn btn-ghost btn-sm" aria-label="Next Exercise" on:click={onNext}>
 			<ChevronDoubleRight />
 		</button>
 	</div>
@@ -106,7 +72,7 @@
 		</label>
 	</div>
 	<span class="inline-flex font-mono text-lg items-center">
-		{formatDuration(Math.trunc((duration - timer) / 1000))}<svg
+		{formatDuration(Math.trunc(($timer.duration - $timer.remainingTime) / 1000))}<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 24 24"
@@ -116,7 +82,7 @@
 		>
 			<path stroke-linecap="round" stroke-linejoin="round" d="m9 20.247 6-16.5" />
 		</svg>
-		{formatDuration(Math.trunc(duration / 1000))}
+		{formatDuration(Math.trunc($timer.duration / 1000))}
 	</span>
 </div>
 

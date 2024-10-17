@@ -14,10 +14,10 @@ export async function load({ params }) {
 		const exercises = await practiceRoutineExerciseRepository.getExercisesForPracticeRoutine(
 			practiceRoutine.id
 		);
+		client.close();
 		return {
 			practiceRoutine,
 			exercises,
-			client
 		};
 	}
 	error(404, 'Not found');

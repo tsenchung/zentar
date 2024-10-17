@@ -11,7 +11,7 @@
 	let audioCtx: AudioContext | undefined;
 	let playing = false;
 	if (browser) {
-		audioCtx = new AudioContext();
+		audioCtx = new AudioContext({latencyHint: "interactive"});
 	}
 	let buffer: AudioBuffer | undefined;
 	let buffer2: AudioBuffer | undefined;
@@ -39,6 +39,7 @@
 			source.start(start + i * time);
 			scheduled.push(source);
 			source.addEventListener('ended', () => {
+				source.disconnect();
 				scheduled.shift();
 			});
 		}
@@ -57,11 +58,15 @@
 		scheduled.forEach((node) => {
 			node.disconnect();
 		});
+		audioCtx?.suspend();
 		playing = false;
 	}
 
 	function play() {
 		playing = true;
+		if (audioCtx?.state == "suspended") {
+			audioCtx.resume();
+		}
 		nextAvailableSlot = audioCtx!.currentTime + 0.01;
 		schedule();
 		scheduler = setInterval(schedule, 100);
