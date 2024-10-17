@@ -53,7 +53,7 @@
 			source.start();
 			audioCtx.resume();
 		}
-		if (autoplay) {
+		if (autoplay && currentIndex + 1 < data.exercises.length) {
 			nextExerciseTimer = createTimer(3000, async () => {
 				if (nextExerciseTimerUnsubscribe) {
 					nextExerciseTimerUnsubscribe();
