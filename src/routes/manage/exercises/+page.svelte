@@ -164,9 +164,6 @@
 					<input type="hidden" name="aid.highlightMode.type" value={highlightMode.type} />
 					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					<input type="hidden" name="aid.highlightMode.tonic" value={highlightMode.tonic} />
-					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
-					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
-					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					{#if highlightMode.type == 'Chord'}
 						<input
 							type="hidden"
@@ -178,7 +175,6 @@
 							name="aid.highlightMode.chordNumber"
 							value={highlightMode.chordNumber}
 						/>
-						<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					{/if}
 					<section class="overflow-scroll">
 						<GuitarVisualization
