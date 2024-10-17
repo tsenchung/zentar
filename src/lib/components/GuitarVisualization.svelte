@@ -1,39 +1,23 @@
-<script lang="ts">
-	import type { DisplayParameters } from '$lib';
-	import { buildFretboard, type Note } from '$lib/theory/fretboard';
-	import { ToneClass } from '$lib/theory/tones';
-	import Fret from './Fret.svelte';
-	import Fretboard from './Fretboard.svelte';
-	import FretMarker from './FretMarker.svelte';
-	import NoteComponent from './NoteComponent.svelte';
-	import Nut from './Nut.svelte';
-
-	export let strings: ReadonlyArray<ToneClass>;
-	export let highlighters: ReadonlyArray<(note: Note) => Note>;
-	export let options: DisplayParameters;
+<script lang="ts" context="module">
+	const colors: string[] = [];
+	{
+		const start = 250;
+		const end = 360;
+		const totalDistance = start <= end ? end - start : 360 - start + end;
+		const step = totalDistance / 11;
+		console.log(totalDistance);
+		let hue;
+		for (let i = 0; i <= 11; i++) {
+			hue = (start + i * step) % 360;
+			colors.push(`oklch(77% 0.12 ${hue})`);
+		}
+	}
 
 	function marker(fret: number, type: 'single' | 'double') {
 		return { fret, type };
 	}
 
-	const colors = [
-		'#99dbff',
-		'#92d2ff',
-		'#91c9ff',
-		'#95beff',
-		'#9db3ff',
-		'#a7adff',
-		'#b3a7ff',
-		'#c0a0ff',
-		'#cb9fff',
-		'#d79dff',
-		'#e29bff',
-		'#ee99ff'
-	];
-
-	$: fretboard = buildFretboard(strings, options.frets, highlighters);
-
-	$: fretMarkers = [
+	const allFretMarkers = [
 		marker(3, 'single'),
 		marker(5, 'single'),
 		marker(7, 'single'),
@@ -44,21 +28,44 @@
 		marker(19, 'single'),
 		marker(21, 'single'),
 		marker(24, 'double')
-	].filter((marker) => marker.fret <= options.frets);
+	];
+</script>
+
+<script lang="ts">
+	import type { DisplayParameters } from '$lib';
+	import {
+		buildFretboard,
+		buildHighlighter,
+		type HighlightMode,
+		type Note
+	} from '$lib/theory/fretboard';
+	import Fret from './Fret.svelte';
+	import Fretboard from './Fretboard.svelte';
+	import FretMarker from './FretMarker.svelte';
+	import NoteComponent from './NoteComponent.svelte';
+	import Nut from './Nut.svelte';
+
+	export let highlightMode: HighlightMode;
+	let highlighters: ReadonlyArray<(note: Note) => Note>;
+	export let options: DisplayParameters;
+
+	$: highlighters = [buildHighlighter(highlightMode)];
+	$: fretboard = buildFretboard(options.strings, options.frets, highlighters);
+	$: fretMarkers = allFretMarkers.filter((marker) => marker.fret <= options.frets);
 </script>
 
 <svg
 	width={options.head.width + options.frets * options.fret.spacing + 40}
-	height={30 + options.marginTop + strings.length * options.stringSpacing}
+	height={30 + options.marginTop + options.strings.length * options.stringSpacing}
 	class="bg-base-100"
 >
 	<g class="layer-base">
-		<Nut parameters={options} stringCount={strings.length} />
+		<Nut parameters={options} stringCount={options.strings.length} />
 		<Fretboard parameters={options}>
 			{#each Array(options.frets) as _, i}
-				<Fret parameters={options} number={i} stringCount={strings.length} />
+				<Fret parameters={options} number={i} stringCount={options.strings.length} />
 			{/each}
-			{#each strings as _, j}
+			{#each options.strings as _, j}
 				<line
 					x1={0}
 					y1={j * options.stringSpacing}
@@ -69,7 +76,7 @@
 				/>
 			{/each}
 			<g
-				transform="translate(0,{(strings.length - 1) * options.stringSpacing +
+				transform="translate(0,{(options.strings.length - 1) * options.stringSpacing +
 					options.note.radius +
 					2.5 +
 					15})"

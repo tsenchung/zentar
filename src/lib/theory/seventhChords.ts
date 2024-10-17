@@ -22,11 +22,11 @@ export const minorSeventhFlat5: ToneGroupBuilder = (tonic) =>
 	minorSeventhFlat5Steps.map((steps) => ({ tone: add(tonic, steps), interval: steps }));
 
 export const majorScaleHarmonizationSevenths = [
-	{ name: 'I', builder: majorSeventh },
-	{ name: 'ii', builder: minorSeventh },
-	{ name: 'iii', builder: minorSeventh },
-	{ name: 'IV', builder: majorSeventh },
-	{ name: 'V', builder: dominantSeventh },
-	{ name: 'vi', builder: minorSeventh },
-	{ name: 'vii', builder: minorSeventhFlat5 }
+	{ name: 'I⁷', builder: majorSeventh },
+	{ name: 'ii⁷', builder: minorSeventh },
+	{ name: 'iii⁷', builder: minorSeventh },
+	{ name: 'IV⁷', builder: majorSeventh },
+	{ name: 'V⁷', builder: dominantSeventh },
+	{ name: 'vi⁷', builder: minorSeventh },
+	{ name: 'vii°⁷', builder: minorSeventhFlat5 }
 ];

@@ -54,10 +54,12 @@
 		</ul>
 		<svelte:fragment slot="title">Routines</svelte:fragment>
 		<svelte:fragment slot="actions">
-			<button class="btn btn-primary" on:click={showCreateRoutineModal}><IconPlus />Create Routine</button>
+			<button class="btn btn-primary" on:click={showCreateRoutineModal}
+				><IconPlus />Create Routine</button
+			>
 		</svelte:fragment>
 	</Header>
-	<table class="table">
+	<table class="table table-zebra">
 		<thead>
 			<tr>
 				<td>Name</td>
@@ -70,10 +72,16 @@
 					<td><span class="text-lg">{practiceRoutine.name}</span></td>
 					<td>
 						<div class="flex gap-2">
-							<a class="btn btn-circle btn-outline btn-primary" href="routines/{practiceRoutine.id}/practice">
+							<a
+								class="btn btn-circle btn-outline btn-primary"
+								href="routines/{practiceRoutine.id}/practice"
+							>
 								<Play size="size-6" />
 							</a>
-							<a class="btn btn-circle btn-outline btn-neutral" href="routines/{practiceRoutine.id}">
+							<a
+								class="btn btn-circle btn-outline btn-neutral"
+								href="routines/{practiceRoutine.id}"
+							>
 								<Pencil />
 							</a>
 							<button

@@ -1,3 +1,4 @@
+import { HighlightModeSchema } from '$lib/theory/fretboard';
 import { z } from 'zod';
 
 export interface Repository<T> {
@@ -15,12 +16,16 @@ export const PracticeRoutineSchema = z.object({
 
 export type PracticeRoutine = z.infer<typeof PracticeRoutineSchema>;
 
-export const TextAidSchema = z.object({ type: z.literal('TextAid'), text: z.string() });
+export const AidTextSchema = z.object({ type: z.literal('AidText'), text: z.string() });
+export const AidVisualizerSchema = z.object({
+	type: z.literal('AidVisualizer'),
+	highlightMode: HighlightModeSchema
+});
 
 export const ExerciseSchema = z.object({
 	id: z.number(),
 	title: z.string().min(1, { message: 'Please enter a title for the exercise.' }),
-	aid: z.discriminatedUnion('type', [TextAidSchema])
+	aid: z.discriminatedUnion('type', [AidTextSchema, AidVisualizerSchema])
 });
 
 export type Exercise = z.infer<typeof ExerciseSchema>;

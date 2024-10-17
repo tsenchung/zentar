@@ -32,7 +32,11 @@
 
 <style>
 	.inactive:hover {
-		fill: color-mix( in oklab, oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity, 1)) 90%, black );
+		fill: color-mix(
+			in oklab,
+			oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity, 1)) 90%,
+			black
+		);
 	}
 
 	.arc {

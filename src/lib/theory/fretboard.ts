@@ -1,6 +1,11 @@
 import type { ToneGroupBuilder } from '.';
 import { chromaticScale } from './chromaticScale';
-import type { ToneClass } from './tones';
+import { majorScale } from './majorScale';
+import { minorScale } from './minorScale';
+import { majorScaleHarmonizationSevenths } from './seventhChords';
+import { ToneClass } from './tones';
+import { majorScaleHarmonizationTriads } from './triad';
+import { z } from 'zod';
 
 interface Highlight {
 	interval: number;
@@ -16,6 +21,36 @@ export interface Fretboard {
 	strings: ReadonlyArray<ToneClass>;
 	frets: number;
 }
+
+const ScaleSchema = z.enum(['Major', 'Minor']);
+export type Scale = z.infer<typeof ScaleSchema>;
+
+const ChordTypeSchema = z.enum(['Triad', 'Seventh']);
+export type ChordType = z.infer<typeof ChordTypeSchema>;
+
+const HighlightModeScaleSchema = z.object({
+	type: z.literal('Scale'),
+	scale: ScaleSchema,
+	tonic: z.preprocess((v) => (typeof v == 'string' ? parseInt(v, 10) : v), z.nativeEnum(ToneClass))
+});
+export type HighlightModeScale = z.infer<typeof HighlightModeScaleSchema>;
+
+const HighlightModeChordSchema = z.object({
+	type: z.literal('Chord'),
+	scale: ScaleSchema,
+	chordType: ChordTypeSchema,
+	tonic: z.preprocess((v) => (typeof v == 'string' ? parseInt(v, 10) : v), z.nativeEnum(ToneClass)),
+	chordNumber: z.coerce.number()
+});
+
+export type HighlightModeChord = z.infer<typeof HighlightModeChordSchema>;
+
+export const HighlightModeSchema = z.discriminatedUnion('type', [
+	HighlightModeScaleSchema,
+	HighlightModeChordSchema
+]);
+export type HighlightMode = z.infer<typeof HighlightModeSchema>;
+
 type Highlighter = (note: Note) => Note;
 
 const createNote = (tone: ToneClass): Note => ({
@@ -41,6 +76,37 @@ export const highlighter = (toneGroupBuilder: ToneGroupBuilder) => (baseTone: To
 		};
 	};
 };
+
+function throwNever(value: never) {
+	throw new Error(`Unhandled case: ${value}`);
+}
+
+function toneGroupBuilderFor(scale: Scale): ToneGroupBuilder {
+	switch (scale) {
+		case 'Major':
+			return majorScale;
+		case 'Minor':
+			return minorScale;
+		default:
+			throwNever(scale);
+			return majorScale;
+	}
+}
+
+export function buildHighlighter(highlightMode: HighlightMode) {
+	if (highlightMode.type == 'Scale') {
+		return highlighter(toneGroupBuilderFor(highlightMode.scale))(highlightMode.tonic);
+	} else {
+		const scale = toneGroupBuilderFor(highlightMode.scale)(highlightMode.tonic);
+		const harmonization =
+			highlightMode.chordType == 'Triad'
+				? majorScaleHarmonizationTriads
+				: majorScaleHarmonizationSevenths;
+		return highlighter(harmonization[highlightMode.chordNumber].builder)(
+			scale[highlightMode.chordNumber].tone
+		);
+	}
+}
 
 export const buildFretboard = (
 	strings: ReadonlyArray<ToneClass>,

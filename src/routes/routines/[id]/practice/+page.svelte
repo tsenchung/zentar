@@ -1,8 +1,30 @@
+<script lang="ts" context="module">
+	import { browser } from '$app/environment';
+	import NotificationSoundDone from './179198__snapper4298__micro_bell.wav';
+
+	let audioCtx: AudioContext | undefined;
+	let bufferDoneNotification: AudioBuffer | undefined;
+	if (browser) {
+		audioCtx = new AudioContext();
+		audioCtx.suspend();
+		getBuffers();
+	}
+
+	async function getBuffers() {
+		const response = await fetch(NotificationSoundDone);
+		bufferDoneNotification = await audioCtx!.decodeAudioData(await response.arrayBuffer());
+	}
+</script>
+
 <script lang="ts">
 	import Metronome from '$lib/components/metronome/Metronome.svelte';
-	import { onDestroy } from 'svelte';
 	import ExerciseTimeControls from './ExerciseTimeControls.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
+	import { fretboardSettings } from '$lib/settings';
+	import { createTimer, type ReadableTimer, type Timer } from '$lib/timer';
+	import type { Unsubscriber } from 'svelte/store';
+	import { onDestroy } from 'svelte';
 
 	export let data;
 	let autoplay: boolean = false;
@@ -10,6 +32,40 @@
 	$: currentTuple = data.exercises.length > 0 ? data.exercises[currentIndex] : undefined;
 	$: currentRoutineExercise = currentTuple ? currentTuple[0] : undefined;
 	$: currentExercise = currentTuple ? currentTuple[1] : undefined;
+
+	let nextExerciseTimer: ReadableTimer | undefined;
+	let nextExerciseTimerUnsubscribe: Unsubscriber | undefined;
+	let nextExerciseTimerState: Timer | undefined;
+
+	function updateNextExerciseTimerState(nextState: Timer) {
+		nextExerciseTimerState = nextState;
+	}
+
+	async function onExerciseComplete(autoplay: boolean) {
+		if (audioCtx && bufferDoneNotification) {
+			const source = audioCtx.createBufferSource();
+			source.buffer = bufferDoneNotification;
+			source.connect(audioCtx.destination);
+			source.addEventListener('ended', () => {
+				source.disconnect();
+				audioCtx.suspend();
+			});
+			source.start();
+			audioCtx.resume();
+		}
+		if (autoplay && currentIndex + 1 < data.exercises.length) {
+			nextExerciseTimer = createTimer(3000, async () => {
+				if (nextExerciseTimerUnsubscribe) {
+					nextExerciseTimerUnsubscribe();
+				}
+				nextExerciseTimer = undefined;
+				nextExerciseTimerState = undefined;
+				nextExercise();
+			});
+			nextExerciseTimer.start();
+			nextExerciseTimerUnsubscribe = nextExerciseTimer.subscribe(updateNextExerciseTimerState);
+		}
+	}
 
 	function nextExercise() {
 		if (currentIndex + 1 < data.exercises.length) {
@@ -37,7 +93,10 @@
 	}
 
 	onDestroy(() => {
-		data.client.close();
+		if (nextExerciseTimerUnsubscribe) {
+			nextExerciseTimerUnsubscribe();
+			nextExerciseTimerUnsubscribe = undefined;
+		}
 	});
 </script>
 
@@ -58,11 +117,27 @@
 			<h2 class="sr-only">{currentExercise?.title}</h2>
 			<div class="flex justify-center items-center p-4 min-h-[50lvh]">
 				<section class="overflow-scroll">
-					<pre class="inline text-lg">
+					{#if currentExercise?.aid.type == 'AidText'}
+						<pre class="inline text-lg">
 {currentExercise?.aid.text}
-				</pre>
+						</pre>
+					{:else if currentExercise?.aid.type == 'AidVisualizer'}
+						<GuitarVisualization
+							options={$fretboardSettings}
+							highlightMode={currentExercise.aid.highlightMode}
+						/>
+					{/if}
 				</section>
 			</div>
+			{#if nextExerciseTimerState}
+				<div class="toast toast-top">
+					<div class="alert alert-info">
+						<span
+							>Next exercise starting in {Math.ceil(nextExerciseTimerState.remainingTime / 1000)} seconds</span
+						>
+					</div>
+				</div>
+			{/if}
 			{#if currentRoutineExercise}
 				{#key currentRoutineExercise.id}
 					<ExerciseTimeControls
@@ -72,6 +147,7 @@
 							autoplay = ap;
 						}}
 						onPrevious={previousExercise}
+						onComplete={onExerciseComplete}
 						onNext={nextExercise}
 					/>
 				{/key}
@@ -83,7 +159,7 @@
 				<div class="flex justify-start items-center gap-4 h-5">
 					<span class="text-2xl" aria-hidden="true">{currentExercise?.title}</span>
 				</div>
-				<div class="metronome w-5/12 h-56 mt-8"><Metronome /></div>
+				<div class="metronome w-96 h-56 mt-8"><Metronome /></div>
 			</div>
 			<div>
 				<h3 class="text-2xl">Exercises</h3>

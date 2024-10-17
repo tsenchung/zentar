@@ -10,6 +10,13 @@
 	import { z } from 'zod';
 	import IconPlus from '$lib/icons/IconPlus.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import { orderedTones, renderTone, ToneClass } from '$lib/theory/tones';
+	import { majorScaleHarmonizationTriads } from '$lib/theory/triad';
+	import { majorScaleHarmonizationSevenths } from '$lib/theory/seventhChords';
+	import HighlightPicker from '$lib/components/HighlightPicker.svelte';
+	import type { HighlightMode } from '$lib/theory/fretboard';
+	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
+	import { fretboardSettings } from '$lib/settings.js';
 
 	export let data;
 
@@ -45,6 +52,20 @@
 		};
 	}
 
+	function setHighlightMode(picked: HighlightMode) {
+		highlightMode = picked;
+	}
+
+	let aidType: string = 'AidText';
+
+	let defaultHighlightMode: HighlightMode = {
+		type: 'Scale',
+		scale: 'Major',
+		tonic: ToneClass.C
+	};
+
+	let highlightMode: HighlightMode;
+
 	onDestroy(() => {
 		data.client.close();
 	});
@@ -65,7 +86,7 @@
 			>
 		</svelte:fragment>
 	</Header>
-	<table class="table">
+	<table class="table table-zebra">
 		<thead>
 			<tr>
 				<td> Name </td>
@@ -108,8 +129,60 @@
 				<TextInputControl errorElementId="create_exercise_name_error" name="title">
 					<span class="label-text font-semibold">Name</span>
 				</TextInputControl>
-				<input hidden name="aid.type" value="TextAid" />
-				<textarea class="textarea textarea-bordered font-mono w-full" name="aid.text" />
+				<fieldset class="form-control">
+					<div class="label">
+						<legend class="label-text font-semibold">Aid Type</legend>
+					</div>
+					<div class="join">
+						<input
+							class="join-item btn"
+							type="radio"
+							name="aid.type"
+							value="AidText"
+							aria-label="Text"
+							bind:group={aidType}
+						/>
+						<input
+							class="join-item btn"
+							type="radio"
+							name="aid.type"
+							value="AidVisualizer"
+							aria-label="Visualizer"
+							bind:group={aidType}
+						/>
+					</div>
+				</fieldset>
+				{#if aidType == 'AidText'}
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text font-semibold">Text Aid</span>
+						</div>
+						<textarea class="textarea textarea-bordered font-mono w-full" name="aid.text" />
+					</label>
+				{:else if aidType == 'AidVisualizer'}
+					<HighlightPicker onHighlightPicked={setHighlightMode} />
+					<input type="hidden" name="aid.highlightMode.type" value={highlightMode.type} />
+					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
+					<input type="hidden" name="aid.highlightMode.tonic" value={highlightMode.tonic} />
+					{#if highlightMode.type == 'Chord'}
+						<input
+							type="hidden"
+							name="aid.highlightMode.chordType"
+							value={highlightMode.chordType}
+						/>
+						<input
+							type="hidden"
+							name="aid.highlightMode.chordNumber"
+							value={highlightMode.chordNumber}
+						/>
+					{/if}
+					<section class="overflow-scroll">
+						<GuitarVisualization
+							highlightMode={highlightMode || defaultHighlightMode}
+							options={$fretboardSettings}
+						/>
+					</section>
+				{/if}
 				<div>
 					<button class="btn btn-primary">Create</button>
 				</div>

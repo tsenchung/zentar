@@ -1,4 +1,8 @@
 <script lang="ts">
+	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Metronome from '$lib/components/metronome/Metronome.svelte';
+	import { fretboardSettings } from '$lib/settings';
 	import { onDestroy } from 'svelte';
 
 	export let data;
@@ -12,8 +16,22 @@
 	<title>Exercise: {data.exercise.title}</title>
 </svelte:head>
 <main>
-	<h1 class="text-2xl">{data.exercise.title}</h1>
-	<pre>
+	<Header>
+		<ul slot="breadcrumbs">
+			<li><a href="/manage/exercises">Exercises</a></li>
+			<li>{data.exercise.title}</li>
+		</ul>
+		<svelte:fragment slot="title">{data.exercise.title}</svelte:fragment>
+	</Header>
+	{#if data.exercise.aid.type == 'AidText'}
+		<pre>
 {data.exercise.aid.text}
-    </pre>
+</pre>
+	{:else if data.exercise.aid.type == 'AidVisualizer'}
+		<GuitarVisualization
+			options={$fretboardSettings}
+			highlightMode={data.exercise.aid.highlightMode}
+		/>
+	{/if}
+	<div class="metronome w-96 h-56 mt-8"><Metronome /></div>
 </main>
