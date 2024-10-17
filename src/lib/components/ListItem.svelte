@@ -6,6 +6,7 @@
 
 <li class="w-full">
 	<button
+		type="button"
 		on:click={onSelect}
 		class="btn w-full text-s flex p-3 font-semibold rounded-none {active ? 'btn-primary' : ''}"
 		>{label}</button
