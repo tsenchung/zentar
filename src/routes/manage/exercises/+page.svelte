@@ -53,7 +53,7 @@
 	}
 
 	function setHighlightMode(picked: HighlightMode) {
-		highlightMode = picked
+		highlightMode = picked;
 	}
 
 	let aidType: string = 'AidText';
@@ -160,7 +160,7 @@
 						<textarea class="textarea textarea-bordered font-mono w-full" name="aid.text" />
 					</label>
 				{:else if aidType == 'AidVisualizer'}
-					<HighlightPicker onHighlightPicked={setHighlightMode}/>
+					<HighlightPicker onHighlightPicked={setHighlightMode} />
 					<input type="hidden" name="aid.highlightMode.type" value={highlightMode.type} />
 					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					<input type="hidden" name="aid.highlightMode.tonic" value={highlightMode.tonic} />
@@ -168,8 +168,16 @@
 					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					{#if highlightMode.type == 'Chord'}
-						<input type="hidden" name="aid.highlightMode.chordType" value={highlightMode.chordType} />
-						<input type="hidden" name="aid.highlightMode.chordNumber" value={highlightMode.chordNumber} />
+						<input
+							type="hidden"
+							name="aid.highlightMode.chordType"
+							value={highlightMode.chordType}
+						/>
+						<input
+							type="hidden"
+							name="aid.highlightMode.chordNumber"
+							value={highlightMode.chordNumber}
+						/>
 						<input type="hidden" name="aid.highlightMode.scale" value={highlightMode.scale} />
 					{/if}
 					<section class="overflow-scroll">

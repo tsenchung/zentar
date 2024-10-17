@@ -1,5 +1,10 @@
-
-import { writable, type Subscriber, type Invalidator, type Unsubscriber, type Readable} from 'svelte/store';
+import {
+	writable,
+	type Subscriber,
+	type Invalidator,
+	type Unsubscriber,
+	type Readable
+} from 'svelte/store';
 
 export interface Timer {
 	state: 'playing' | 'stopped';
@@ -12,7 +17,6 @@ export interface ReadableTimer extends Readable<Timer> {
 	stop: () => void;
 }
 
-
 export function createTimer(duration: number, onComplete: () => Promise<void>): ReadableTimer {
 	let timerEnd: number;
 	let remainingTime = duration;
@@ -23,10 +27,10 @@ export function createTimer(duration: number, onComplete: () => Promise<void>): 
 	const tick = () => {
 		const currentValue = timerEnd - new Date().valueOf();
 		if (currentValue > 0) {
-			timer = {...timer, remainingTime: currentValue };
+			timer = { ...timer, remainingTime: currentValue };
 			store.set(timer);
 		} else {
-			timer = {...timer, state: 'stopped', remainingTime: 0 };
+			timer = { ...timer, state: 'stopped', remainingTime: 0 };
 			store.set(timer);
 			clearInterval(intervalId);
 			intervalId = undefined;
@@ -35,19 +39,19 @@ export function createTimer(duration: number, onComplete: () => Promise<void>): 
 	};
 
 	const start = () => {
-		if (timer.state == "stopped") {
+		if (timer.state == 'stopped') {
 			timerEnd = new Date().valueOf() + remainingTime;
-			timer = {...timer, state: 'playing' };
+			timer = { ...timer, state: 'playing' };
 			store.set(timer);
 			intervalId = setInterval(tick, 50);
 		}
 	};
 
 	const stop = () => {
-		if (timer.state == "playing") {
+		if (timer.state == 'playing') {
 			clearInterval(intervalId);
 			remainingTime = timerEnd - new Date().valueOf();
-			timer = {...timer, state: 'stopped', remainingTime };
+			timer = { ...timer, state: 'stopped', remainingTime };
 			store.set(timer);
 		}
 	};
@@ -63,9 +67,9 @@ export function createTimer(duration: number, onComplete: () => Promise<void>): 
 				if (subscribers == 0) {
 					stop();
 				}
-			}
+			};
 		},
 		start,
-		stop,
-	}
+		stop
+	};
 }

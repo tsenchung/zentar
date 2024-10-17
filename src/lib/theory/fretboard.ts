@@ -31,19 +31,19 @@ export type ChordType = z.infer<typeof ChordTypeSchema>;
 const HighlightModeScaleSchema = z.object({
 	type: z.literal('Scale'),
 	scale: ScaleSchema,
-	tonic: z.preprocess((v) => typeof v == 'string' ? parseInt(v, 10): v, z.nativeEnum(ToneClass))
+	tonic: z.preprocess((v) => (typeof v == 'string' ? parseInt(v, 10) : v), z.nativeEnum(ToneClass))
 });
-export type HighlightModeScale = z.infer<typeof HighlightModeScaleSchema>
+export type HighlightModeScale = z.infer<typeof HighlightModeScaleSchema>;
 
 const HighlightModeChordSchema = z.object({
 	type: z.literal('Chord'),
 	scale: ScaleSchema,
 	chordType: ChordTypeSchema,
-	tonic: z.preprocess((v) => typeof v == 'string' ? parseInt(v, 10): v, z.nativeEnum(ToneClass)),
+	tonic: z.preprocess((v) => (typeof v == 'string' ? parseInt(v, 10) : v), z.nativeEnum(ToneClass)),
 	chordNumber: z.coerce.number()
 });
 
-export type HighlightModeChord  = z.infer<typeof HighlightModeChordSchema>
+export type HighlightModeChord = z.infer<typeof HighlightModeChordSchema>;
 
 export const HighlightModeSchema = z.discriminatedUnion('type', [
 	HighlightModeScaleSchema,
@@ -83,9 +83,9 @@ function throwNever(value: never) {
 
 function toneGroupBuilderFor(scale: Scale): ToneGroupBuilder {
 	switch (scale) {
-		case "Major":
+		case 'Major':
 			return majorScale;
-		case "Minor":
+		case 'Minor':
 			return minorScale;
 		default:
 			throwNever(scale);
@@ -97,9 +97,14 @@ export function buildHighlighter(highlightMode: HighlightMode) {
 	if (highlightMode.type == 'Scale') {
 		return highlighter(toneGroupBuilderFor(highlightMode.scale))(highlightMode.tonic);
 	} else {
-			const scale = toneGroupBuilderFor(highlightMode.scale)(highlightMode.tonic);
-			const harmonization = highlightMode.chordType == "Triad" ? majorScaleHarmonizationTriads : majorScaleHarmonizationSevenths;
-			return highlighter(harmonization[highlightMode.chordNumber].builder)(scale[highlightMode.chordNumber].tone);
+		const scale = toneGroupBuilderFor(highlightMode.scale)(highlightMode.tonic);
+		const harmonization =
+			highlightMode.chordType == 'Triad'
+				? majorScaleHarmonizationTriads
+				: majorScaleHarmonizationSevenths;
+		return highlighter(harmonization[highlightMode.chordNumber].builder)(
+			scale[highlightMode.chordNumber].tone
+		);
 	}
 }
 

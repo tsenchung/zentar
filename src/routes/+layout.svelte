@@ -87,7 +87,11 @@
 			<section>
 				<h2>Other Sounds</h2>
 				<p>
-					<a href="https://freesound.org/people/Snapper4298/sounds/179198/">MICRO_BELL.wav</a> by <a href="https://freesound.org/people/Snapper4298/">Snapper4298</a> | License: <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution NonCommercial 4.0</a>
+					<a href="https://freesound.org/people/Snapper4298/sounds/179198/">MICRO_BELL.wav</a> by
+					<a href="https://freesound.org/people/Snapper4298/">Snapper4298</a>
+					| License:
+					<a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution NonCommercial 4.0</a
+					>
 				</p>
 			</section>
 			<section>

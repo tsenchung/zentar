@@ -17,7 +17,7 @@ export async function load({ params }) {
 		client.close();
 		return {
 			practiceRoutine,
-			exercises,
+			exercises
 		};
 	}
 	error(404, 'Not found');

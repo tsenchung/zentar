@@ -19,7 +19,7 @@ export type PracticeRoutine = z.infer<typeof PracticeRoutineSchema>;
 export const AidTextSchema = z.object({ type: z.literal('AidText'), text: z.string() });
 export const AidVisualizerSchema = z.object({
 	type: z.literal('AidVisualizer'),
-	highlightMode: HighlightModeSchema,
+	highlightMode: HighlightModeSchema
 });
 
 export const ExerciseSchema = z.object({

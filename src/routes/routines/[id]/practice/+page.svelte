@@ -128,7 +128,9 @@
 			{#if nextExerciseTimerState}
 				<div class="toast toast-top">
 					<div class="alert alert-info">
-						<span>Next exercise starting in {Math.trunc(nextExerciseTimerState.remainingTime / 1000)} seconds</span>
+						<span
+							>Next exercise starting in {Math.trunc(nextExerciseTimerState.remainingTime / 1000)} seconds</span
+						>
 					</div>
 				</div>
 			{/if}

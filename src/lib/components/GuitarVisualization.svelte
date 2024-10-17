@@ -3,7 +3,7 @@
 	{
 		const start = 250;
 		const end = 360;
-		const totalDistance = (start <= end) ? end - start : (360 - start) + end;
+		const totalDistance = start <= end ? end - start : 360 - start + end;
 		const step = totalDistance / 11;
 		console.log(totalDistance);
 		let hue;
@@ -11,7 +11,7 @@
 			hue = (start + i * step) % 360;
 			colors.push(`oklch(77% 0.12 ${hue})`);
 		}
-	};
+	}
 
 	function marker(fret: number, type: 'single' | 'double') {
 		return { fret, type };
@@ -29,12 +29,16 @@
 		marker(21, 'single'),
 		marker(24, 'double')
 	];
-
 </script>
 
 <script lang="ts">
 	import type { DisplayParameters } from '$lib';
-	import { buildFretboard, buildHighlighter, type HighlightMode, type Note } from '$lib/theory/fretboard';
+	import {
+		buildFretboard,
+		buildHighlighter,
+		type HighlightMode,
+		type Note
+	} from '$lib/theory/fretboard';
 	import Fret from './Fret.svelte';
 	import Fretboard from './Fretboard.svelte';
 	import FretMarker from './FretMarker.svelte';

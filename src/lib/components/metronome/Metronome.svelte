@@ -11,7 +11,7 @@
 	let audioCtx: AudioContext | undefined;
 	let playing = false;
 	if (browser) {
-		audioCtx = new AudioContext({latencyHint: "interactive"});
+		audioCtx = new AudioContext({ latencyHint: 'interactive' });
 	}
 	let buffer: AudioBuffer | undefined;
 	let buffer2: AudioBuffer | undefined;
@@ -64,7 +64,7 @@
 
 	function play() {
 		playing = true;
-		if (audioCtx?.state == "suspended") {
+		if (audioCtx?.state == 'suspended') {
 			audioCtx.resume();
 		}
 		nextAvailableSlot = audioCtx!.currentTime + 0.01;
@@ -93,15 +93,11 @@
 
 <div class="flex text-2xl gap-4 mb-4">
 	Metronome
-<label class="swap text-primary font-bold">
-	<input type="checkbox" on:click={togglePlay} autocomplete="off" />
-	<div class="swap-on">
-		ON
-	</div>
-	<div class="swap-off">
-		OFF
-	</div>
-</label>
+	<label class="swap text-primary font-bold">
+		<input type="checkbox" on:click={togglePlay} autocomplete="off" />
+		<div class="swap-on">ON</div>
+		<div class="swap-off">OFF</div>
+	</label>
 </div>
 <div class="flex justify-between items-center mb-4">
 	<div class="flex items-center gap-4">

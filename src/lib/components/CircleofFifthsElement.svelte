@@ -11,10 +11,19 @@
 	export let onTonicSelected: (tone: ToneClass) => void;
 	export let tabindex: number;
 	export let active: boolean;
-	let label: string = renderTone(tone)
+	let label: string = renderTone(tone);
 </script>
 
-<AnnularSector {a1} {a2} {r1} {r2} {active} ariaLabel={label} onclick={() => onTonicSelected(tone)} {tabindex} />
+<AnnularSector
+	{a1}
+	{a2}
+	{r1}
+	{r2}
+	{active}
+	ariaLabel={label}
+	onclick={() => onTonicSelected(tone)}
+	{tabindex}
+/>
 <text
 	style="pointer-events: none"
 	dominant-baseline="central"
