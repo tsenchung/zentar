@@ -7,6 +7,10 @@
 	if (browser) {
 		audioCtx = new AudioContext();
 		audioCtx.suspend();
+		getBuffers();
+	}
+
+	async function getBuffers() {
 		const response = await fetch(NotificationSoundDone);
 		bufferDoneNotification = await audioCtx!.decodeAudioData(await response.arrayBuffer());
 	}
