@@ -25,6 +25,7 @@
 	import { createTimer, type ReadableTimer, type Timer } from '$lib/timer';
 	import type { Unsubscriber } from 'svelte/store';
 	import { onDestroy } from 'svelte';
+	import MusicNotation from '$lib/components/MusicNotation.svelte';
 
 	export let data;
 	let autoplay: boolean = false;
@@ -118,9 +119,11 @@
 			<div class="flex justify-center items-center p-4 min-h-[50lvh]">
 				<section class="overflow-scroll">
 					{#if currentExercise?.aid.type == 'AidText'}
-						<pre class="inline text-lg">
+					<pre class="inline text-lg">
 {currentExercise?.aid.text}
-						</pre>
+					</pre>
+					{:else if currentExercise?.aid.type == 'AidTabNotation'}
+						<MusicNotation tex={currentExercise?.aid.tex} />
 					{:else if currentExercise?.aid.type == 'AidVisualizer'}
 						<GuitarVisualization
 							options={$fretboardSettings}

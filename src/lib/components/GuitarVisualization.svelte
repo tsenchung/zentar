@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	const colors: string[] = [];
 	{
-		const start = 250;
+		const start = 239;
 		const end = 360;
 		const totalDistance = start <= end ? end - start : 360 - start + end;
 		const step = totalDistance / 11;
@@ -9,7 +9,8 @@
 		let hue;
 		for (let i = 0; i <= 11; i++) {
 			hue = (start + i * step) % 360;
-			colors.push(`oklch(77% 0.12 ${hue})`);
+			colors.push(`oklch(75% 0.094379 ${hue}`);
+			//colors.push(`oklch(70% 0.1449 ${hue})`);
 		}
 	}
 

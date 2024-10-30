@@ -21,11 +21,15 @@ export const AidVisualizerSchema = z.object({
 	type: z.literal('AidVisualizer'),
 	highlightMode: HighlightModeSchema
 });
+export const AidTabNotationSchema = z.object({
+	type: z.literal('AidTabNotation'),
+	tex: z.string()
+});
 
 export const ExerciseSchema = z.object({
 	id: z.number(),
 	title: z.string().min(1, { message: 'Please enter a title for the exercise.' }),
-	aid: z.discriminatedUnion('type', [AidTextSchema, AidVisualizerSchema])
+	aid: z.discriminatedUnion('type', [AidTextSchema, AidVisualizerSchema, AidTabNotationSchema])
 });
 
 export type Exercise = z.infer<typeof ExerciseSchema>;

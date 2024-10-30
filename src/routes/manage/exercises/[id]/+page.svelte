@@ -2,6 +2,7 @@
 	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Metronome from '$lib/components/metronome/Metronome.svelte';
+	import MusicNotation from '$lib/components/MusicNotation.svelte';
 	import { fretboardSettings } from '$lib/settings';
 	import { onDestroy } from 'svelte';
 
@@ -32,6 +33,8 @@
 			options={$fretboardSettings}
 			highlightMode={data.exercise.aid.highlightMode}
 		/>
+	{:else if data.exercise.aid.type == 'AidTabNotation'}
+		<MusicNotation tex={data.exercise.aid.tex}/>
 	{/if}
 	<div class="metronome w-96 h-56 mt-8"><Metronome /></div>
 </main>

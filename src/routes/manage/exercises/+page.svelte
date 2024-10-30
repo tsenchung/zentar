@@ -17,6 +17,7 @@
 	import type { HighlightMode } from '$lib/theory/fretboard';
 	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
 	import { fretboardSettings } from '$lib/settings.js';
+	import MusicNotation from '$lib/components/MusicNotation.svelte';
 
 	export let data;
 
@@ -57,7 +58,7 @@
 	}
 
 	let aidType: string = 'AidText';
-
+	let tex: string = '';
 	let defaultHighlightMode: HighlightMode = {
 		type: 'Scale',
 		scale: 'Major',
@@ -150,6 +151,14 @@
 							aria-label="Visualizer"
 							bind:group={aidType}
 						/>
+						<input
+							class="join-item btn"
+							type="radio"
+							name="aid.type"
+							value="AidTabNotation"
+							aria-label="Tab Notation"
+							bind:group={aidType}
+						/>
 					</div>
 				</fieldset>
 				{#if aidType == 'AidText'}
@@ -182,6 +191,14 @@
 							options={$fretboardSettings}
 						/>
 					</section>
+				{:else if aidType == "AidTabNotation"}
+					<section>
+						<textarea class="textarea textarea-bordered w-full" rows="5" name="aid.tex" bind:value={tex}></textarea>
+						<div class="preview">
+							<h3>Preview</h3>
+							<MusicNotation {tex}/>
+						</div>
+					</section>
 				{/if}
 				<div>
 					<button class="btn btn-primary">Create</button>
@@ -196,3 +213,10 @@
 		<span slot="confirmation_button">Delete</span>
 	</ConfirmationDialog>
 </main>
+
+<style>
+	.preview {
+		height: 500px;
+		overflow-y: auto;
+	}
+</style>

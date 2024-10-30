@@ -1,9 +1,14 @@
 <script lang="ts">
+	import * as alphaTab from '@coderline/alphatab';
 	import { ToneClass } from '$lib/theory/tones';
 	import GuitarVisualization from '$lib/components/GuitarVisualization.svelte';
 	import { type HighlightMode } from '$lib/theory/fretboard';
 	import { fretboardSettings } from '$lib/settings';
 	import HighlightPicker from '$lib/components/HighlightPicker.svelte';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import MusicNotation from '$lib/components/MusicNotation.svelte';
+	
 
 	let highlightMode: HighlightMode | undefined;
 	let defaultHighlightMode: HighlightMode = {
@@ -14,6 +19,7 @@
 	function setHighlightMode(highlightModeToSet: HighlightMode) {
 		highlightMode = highlightModeToSet;
 	}
+	let tex: string = '';
 </script>
 
 <svelte:head>
@@ -37,3 +43,11 @@
 	<div class="divider mt-0"></div>
 	<HighlightPicker onHighlightPicked={setHighlightMode} />
 </main>
+<textarea class="textarea textarea-bordered w-full p-4" rows="10" bind:value={tex} />
+<MusicNotation tex={tex} />
+
+<style>
+	  textarea {
+		width: 100%;
+	  }
+</style>
