@@ -119,7 +119,11 @@
 			<div class="flex justify-center items-center p-4 min-h-[50lvh]">
 				<section class="overflow-scroll">
 					{#if currentExercise?.aid.type == 'AidText'}
-						<MusicNotation tex={currentExercise?.aid.text} />
+					<pre class="inline text-lg">
+{currentExercise?.aid.text}
+					</pre>
+					{:else if currentExercise?.aid.type == 'AidTabNotation'}
+						<MusicNotation tex={currentExercise?.aid.tex} />
 					{:else if currentExercise?.aid.type == 'AidVisualizer'}
 						<GuitarVisualization
 							options={$fretboardSettings}
